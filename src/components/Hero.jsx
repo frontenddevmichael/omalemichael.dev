@@ -1,22 +1,31 @@
-import { useRef } from 'react';
+import { useRef, lazy, Suspense } from 'react';
 import '../hero.css';
-import HeroScene from './HeroScene';
+import { usePrefersReducedMotion } from '../utils/useReducedMotion';
+
+// Lazy-loaded: three.js is the single biggest chunk of this site's bundle
+// and this scene is purely decorative, so it shouldn't block first paint.
+const HeroScene = lazy(() => import('./HeroScene'));
 
 export default function Hero() {
   const sectionRef = useRef(null);
+  const reducedMotion = usePrefersReducedMotion();
 
   return (
     <section className="hero" id="top" ref={sectionRef}>
-      <HeroScene containerRef={sectionRef} />
+      {!reducedMotion && (
+        <Suspense fallback={null}>
+          <HeroScene containerRef={sectionRef} />
+        </Suspense>
+      )}
       <div className="hero-content" style={{position:'relative',zIndex:1}}>
         <div className="status stagger-reveal" style={{animationDelay:'0ms'}}>
           <span className="dot"></span>
           Available for work
         </div>
-        <h2 className="stagger-reveal" style={{animationDelay:'150ms'}}>
+        <h1 className="stagger-reveal" style={{animationDelay:'150ms'}}>
           <span>Design.</span>
           <span>Code. Experience.</span>
-        </h2>
+        </h1>
         <p className="sub stagger-reveal" style={{animationDelay:'350ms'}}>
           Frontend developer and UI/UX designer. I build responsive, accessible interfaces
           and craft clean digital experiences with React, modern CSS, and a focus on usability.

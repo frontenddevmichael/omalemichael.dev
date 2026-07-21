@@ -55,7 +55,7 @@
   animation:reveal-up 700ms var(--ease) forwards;
 }
 
-.hero h2 {
+.hero h1 {
   font-size:var(--fs-hero);
   font-weight:620;
   line-height:var(--lh-tight);
@@ -64,11 +64,11 @@
   max-width:100%;
 }
 
-.hero h2 span {
+.hero h1 span {
   display:block;
 }
 
-.hero h2 span:nth-child(2) {
+.hero h1 span:nth-child(2) {
   color:var(--text-muted);
   font-weight:450;
 }
@@ -150,12 +150,12 @@
 @media (max-width:600px) {
   .hero { padding:4rem var(--space-lg) var(--space-2xl); }
   .hero-content { max-width:100%; }
-  .hero h2 span { font-size:1.75rem; }
+  .hero h1 span { font-size:1.75rem; }
   .hero .sub { max-width:100%; }
   .hero-actions { flex-direction:column; align-items:flex-start; }
   .scroll-hint { left:1rem; }
 }
 
 @media (max-width:400px) {
-  .hero h2 span { font-size:1.5rem; }
+  .hero h1 span { font-size:1.5rem; }
 }

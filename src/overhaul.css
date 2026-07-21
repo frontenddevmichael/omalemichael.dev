@@ -1,0 +1,295 @@
+/* ==========================================================================
+   OVERHAUL.CSS
+   New styles added on top of index.css / hero.css. Kept separate so the
+   diff against the original project stays easy to review.
+   ========================================================================== */
+
+/* --- Nav: layout for 3 children (logo / badge / actions) --- */
+.top-inner { gap: var(--space-md); }
+.top-actions { display: flex; align-items: center; gap: var(--space-sm); flex-shrink: 0; }
+
+/* --- Persistent availability badge --- */
+.avail-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 5px 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: border-color var(--fast), color var(--fast);
+}
+.avail-badge:hover { border-color: var(--border-light); color: var(--text-soft); }
+.avail-badge .dot {
+  width: 5px; height: 5px; border-radius: 50%; background: #39d353; flex-shrink: 0;
+  animation: pulse-dot 2s var(--ease) infinite;
+}
+.avail-badge .avail-sep { color: var(--text-dim); }
+.avail-badge .avail-loc { color: var(--text-dim); }
+
+/* --- Mobile nav burger (hidden on desktop) --- */
+.nav-burger {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  width: 32px;
+  height: 32px;
+  background: transparent;
+  border: none;
+  padding: 0;
+}
+.nav-burger span {
+  display: block;
+  width: 18px;
+  height: 1.5px;
+  background: var(--text);
+  transition: transform var(--fast) var(--ease), opacity var(--fast) var(--ease);
+}
+.nav-burger.open span:nth-child(1) { transform: translateY(5.5px) rotate(45deg); }
+.nav-burger.open span:nth-child(2) { opacity: 0; }
+.nav-burger.open span:nth-child(3) { transform: translateY(-5.5px) rotate(-45deg); }
+
+/* --- Mobile nav sheet (full-screen slide-down) --- */
+.nav-sheet {
+  position: fixed;
+  inset: 0;
+  top: 0;
+  z-index: 95;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: var(--space-3xl) var(--space-xl);
+  transform: translateY(-100%);
+  opacity: 0;
+  transition: transform var(--med) var(--ease-out), opacity var(--med) var(--ease-out);
+  pointer-events: none;
+}
+.nav-sheet.open { transform: translateY(0); opacity: 1; pointer-events: auto; }
+.nav-sheet ul { list-style: none; display: flex; flex-direction: column; gap: var(--space-md); }
+.nav-sheet li {
+  opacity: 0; transform: translateY(12px);
+  transition: opacity var(--med) var(--ease-out), transform var(--med) var(--ease-out);
+}
+.nav-sheet.open li { opacity: 1; transform: translateY(0); }
+.nav-sheet a {
+  font-size: clamp(1.5rem, 7vw, 2.25rem);
+  font-weight: 550;
+  color: var(--text-soft);
+  letter-spacing: -0.01em;
+}
+.nav-sheet-cmd {
+  margin-top: var(--space-2xl);
+  align-self: flex-start;
+  font-family: var(--font-mono);
+  font-size: var(--fs-small);
+  color: var(--text-dim);
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px 16px;
+}
+
+/* --- Loading screen --- */
+.loading-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 400ms var(--ease-out);
+}
+.loading-screen.hide { opacity: 0; pointer-events: none; }
+.loading-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--text-muted);
+}
+.loading-caret { color: var(--text-dim); }
+.loading-cursor {
+  width: 7px; height: 14px; background: var(--text);
+  animation: pulse-dot 1s steps(2) infinite;
+}
+
+/* --- Featured Project (deep-dive case study) --- */
+.featured-proj {
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  padding: var(--space-xl);
+  background: linear-gradient(180deg, var(--surface-2), var(--surface));
+  margin-bottom: var(--space-xl);
+}
+.featured-proj-head { margin-bottom: var(--space-lg); }
+.tag--featured {
+  display: inline-block;
+  color: #39d353;
+  border-color: rgba(57, 211, 83, 0.3);
+  margin-bottom: var(--space-sm);
+}
+.featured-proj-head h3 { font-size: var(--fs-h2); font-weight: 600; color: var(--text-soft); margin-bottom: 4px; }
+.featured-tagline { color: var(--text-muted); font-size: var(--fs-body); }
+.featured-proj-body {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-lg);
+  margin-bottom: var(--space-lg);
+}
+.fp-block .fp-label {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: var(--fs-label);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-dim);
+  margin-bottom: 8px;
+}
+.fp-block p { color: var(--text-muted); font-size: var(--fs-small); line-height: var(--lh-body); }
+.fp-block ul { padding-left: 1.1em; display: flex; flex-direction: column; gap: 6px; }
+.fp-block li { color: var(--text-muted); font-size: var(--fs-small); line-height: var(--lh-body); }
+.featured-proj-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-md);
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--border);
+}
+.fp-links { display: flex; gap: var(--space-sm); }
+.btn--ghost {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: var(--font-mono); font-size: var(--fs-small);
+  color: var(--text-muted); border: 1px solid var(--border-light);
+  border-radius: var(--radius-sm); padding: 8px 14px;
+  transition: border-color var(--fast), color var(--fast);
+}
+.btn--ghost:hover { border-color: var(--text-dim); color: var(--text-soft); }
+.btn--ghost svg { width: 13px; height: 13px; }
+
+@media (min-width: 700px) {
+  .featured-proj-body { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* --- Tag filters --- */
+.proj-filters {
+  display: flex;
+  gap: 8px;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  margin-top: var(--space-lg);
+  scrollbar-width: none;
+}
+.proj-filters::-webkit-scrollbar { display: none; }
+.proj-filter {
+  flex-shrink: 0;
+  font-family: var(--font-mono);
+  font-size: var(--fs-small);
+  color: var(--text-dim);
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 6px 14px;
+  transition: border-color var(--fast), color var(--fast), background var(--fast);
+}
+.proj-filter:hover { color: var(--text-muted); border-color: var(--border-light); }
+.proj-filter.active { color: var(--bg); background: var(--text); border-color: var(--text); }
+
+/* --- Bento grid: first card (post-filter) spans wider --- */
+.proj-grid--bento { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
+@media (min-width: 700px) {
+  .proj-grid--bento { grid-template-columns: repeat(3, 1fr); }
+  .proj--wide { grid-column: span 2; }
+}
+
+/* --- Process section --- */
+.process-list { display: flex; flex-direction: column; }
+.process-step {
+  position: relative;
+  display: flex;
+  gap: var(--space-lg);
+  padding: var(--space-lg) 0;
+  border-bottom: 1px solid var(--border);
+}
+.process-step:last-child { border-bottom: none; }
+.process-num {
+  font-family: var(--font-mono);
+  font-size: var(--fs-h3);
+  color: var(--text-dim);
+  flex-shrink: 0;
+  width: 2ch;
+}
+.process-body h3 { font-size: var(--fs-h3); font-weight: 550; color: var(--text-soft); margin-bottom: 6px; }
+.process-body p { color: var(--text-muted); font-size: var(--fs-small); line-height: var(--lh-body); max-width: 46ch; }
+
+/* --- Testimonials --- */
+.testimonial-note {
+  display: flex; align-items: center; gap: 10px;
+  font-family: var(--font-mono); font-size: var(--fs-small); color: var(--text-dim);
+  border: 1px dashed var(--border-light); border-radius: var(--radius-sm);
+  padding: 10px 14px; margin-bottom: var(--space-lg);
+}
+.testimonial-grid { display: grid; grid-template-columns: 1fr; gap: var(--space-md); }
+@media (min-width: 700px) { .testimonial-grid { grid-template-columns: 1fr 1fr; } }
+.testimonial-card {
+  border: 1px solid var(--border); border-radius: var(--radius-md);
+  padding: var(--space-lg); background: var(--surface-2);
+}
+.testimonial-card p { color: var(--text-soft); font-size: var(--fs-body); line-height: var(--lh-body); font-style: italic; margin-bottom: var(--space-md); }
+.testimonial-card footer { display: flex; flex-direction: column; gap: 2px; }
+.t-name { color: var(--text-soft); font-size: var(--fs-small); font-weight: 550; }
+.t-role { color: var(--text-dim); font-size: var(--fs-label); font-family: var(--font-mono); }
+
+/* --- Contribution graph: loading + mobile horizontal scroll --- */
+.contrib-placeholder--loading {
+  height: 130px; border-radius: var(--radius-md);
+  background: linear-gradient(90deg, var(--surface-2) 25%, var(--surface-3) 37%, var(--surface-2) 63%);
+  background-size: 400% 100%;
+  animation: skeleton-shimmer 1.4s ease infinite;
+}
+@keyframes skeleton-shimmer { 0% { background-position: 100% 50%; } 100% { background-position: 0 50%; } }
+
+@media (max-width: 700px) {
+  .contrib { position: relative; }
+  .contrib-svg { display: block; overflow-x: auto; max-width: 100%; }
+  .contrib { overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+  .contrib::-webkit-scrollbar { display: none; }
+}
+
+/* --- Command palette: full-screen sheet on mobile --- */
+@media (max-width: 640px) {
+  .pal-overlay { align-items: flex-end; padding: 0; }
+  .pal { width: 100%; max-width: 100%; height: 85vh; max-height: 85vh; border-radius: var(--radius-lg) var(--radius-lg) 0 0; }
+}
+
+/* --- Nav: hide desktop items / show burger below tablet width --- */
+@media (max-width: 780px) {
+  .avail-loc { display: none; }
+  .avail-sep { display: none; }
+  .palette-btn span:not(.k) { display: none; }
+}
+@media (max-width: 560px) {
+  .avail-text { display: none; }
+  .avail-badge { padding: 6px 8px; }
+  .palette-btn { display: none; }
+  .nav-burger { display: flex; }
+}
+
+/* --- Reduced motion: also cover new elements --- */
+@media (prefers-reduced-motion: reduce) {
+  .loading-screen { display: none; }
+  .avail-badge .dot { animation: none; }
+  .loading-cursor { animation: none; }
+  .nav-sheet, .nav-sheet li, .nav-burger span { transition: none; }
+}

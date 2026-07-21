@@ -1,4 +1,10 @@
 import SpecSection from './SpecSection';
+import { LINKS } from '../data/links';
+
+// Drop your resume PDF in /public/resume.pdf and this button will serve it
+// directly. Until that file exists, it falls back to a prefilled email
+// request instead of a dead link/fake alert.
+const RESUME_PATH = '/resume.pdf';
 
 export default function Resume() {
   return (
@@ -6,7 +12,18 @@ export default function Resume() {
       <div className="about-grid">
         <div className="about-text stagger-up">
           <p style={{marginBottom:'1.5rem'}}>Download my resume for a complete overview of my experience, education, and skills as a frontend developer.</p>
-          <a href="#" className="btn" onClick={e => { e.preventDefault(); alert('Resume PDF coming soon.'); }}>
+          <a
+            href={RESUME_PATH}
+            download
+            className="btn"
+            onClick={async e => {
+              const res = await fetch(RESUME_PATH, { method: 'HEAD' }).catch(() => null);
+              if (!res || !res.ok) {
+                e.preventDefault();
+                window.location.href = `mailto:${LINKS.email}?subject=${encodeURIComponent('Resume request')}&body=${encodeURIComponent('Hi Michael, could you send over your resume?')}`;
+              }
+            }}
+          >
             <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round">
               <path d="M8 3v9M4 8l4 4 4-4M2 13v2h12v-2"/>
             </svg>

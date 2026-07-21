@@ -20,7 +20,7 @@ export default function About() {
           <div className="metric">
             <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"><rect x="2" y="2" width="14" height="14" rx="2"/><path d="M2 7h14"/></svg>
             <span className="l">stack</span>
-            <span className="v">React + TS</span>
+            <span className="v">React + JS</span>
           </div>
           <div className="metric">
             <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"><path d="M12 2l4 4-4 4M6 16l-4-4 4-4"/></svg>

@@ -17,30 +17,18 @@ export async function fetchRepos() {
     }));
 }
 
-const CONTRIB_QUERY = `query($user:String!) {
-  user(login:$user) {
-    contributionsCollection {
-      contributionCalendar {
-        totalContributions
-        weeks {
-          contributionDays {
-            contributionCount
-            date
-          }
-        }
-      }
-    }
+// Contribution calendar requires GitHub's GraphQL API, which requires auth.
+// That token must NEVER live in client code (a VITE_ env var ships straight into
+// the browser bundle -- anyone can read it in devtools). Instead this calls a
+// same-origin serverless function that holds the token server-side.
+// See /api/contributions.js -- deploy it (Vercel/Netlify function) and set
+// GITHUB_TOKEN as a server-only environment variable there (no VITE_ prefix).
+export async function fetchContributions() {
+  try {
+    const res = await fetch('/api/contributions');
+    if (!res.ok) return null;
+    return await res.json();
+  } catch {
+    return null;
   }
-}`;
-
-export async function fetchContributions(token) {
-  if (!token) return null;
-  const res = await fetch('https://api.github.com/graphql', {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ query: CONTRIB_QUERY, variables: { user: USER } }),
-  });
-  if (!res.ok) return null;
-  const json = await res.json();
-  return json.data?.user?.contributionsCollection?.contributionCalendar || null;
 }

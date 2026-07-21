@@ -1,0 +1,11 @@
+{
+  "name": "Michael Omale — /spec",
+  "short_name": "M. Omale",
+  "icons": [
+    { "src": "/apple-touch-icon.png", "sizes": "180x180", "type": "image/png" }
+  ],
+  "theme_color": "#000000",
+  "background_color": "#000000",
+  "display": "standalone",
+  "start_url": "/"
+}

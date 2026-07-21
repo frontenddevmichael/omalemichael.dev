@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
+import LoadingScreen from './components/LoadingScreen';
 import Nav from './components/Nav';
 import Hero from './components/Hero';
 import About from './components/About';
 import Work from './components/Work';
 import Skills from './components/Skills';
 import Now from './components/Now';
-import Writing from './components/Writing';
+import Process from './components/Process';
+import Testimonials from './components/Testimonials';
 import Resume from './components/Resume';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
@@ -55,6 +57,7 @@ function App() {
 
   return (
     <>
+      <LoadingScreen />
       <ScrollProgress />
       <Nav onOpenPalette={() => setPalOpen(true)} />
       <main>
@@ -81,16 +84,21 @@ function App() {
         <Now />
         <div className="gap-sec stagger-up">
           <span className="num">05</span>
-          <span className="l">Writing</span>
+          <span className="l">Process</span>
         </div>
-        <Writing />
+        <Process />
         <div className="gap-sec stagger-up">
           <span className="num">06</span>
+          <span className="l">Testimonials</span>
+        </div>
+        <Testimonials />
+        <div className="gap-sec stagger-up">
+          <span className="num">07</span>
           <span className="l">Resume</span>
         </div>
         <Resume />
         <div className="gap-sec stagger-up">
-          <span className="num">07</span>
+          <span className="num">08</span>
           <span className="l">Contact</span>
         </div>
         <Contact />

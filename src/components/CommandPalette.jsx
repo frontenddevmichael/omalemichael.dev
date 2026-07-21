@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { createPortal } from 'react-dom';
+import { LINKS } from '../data/links';
 
 const ipaths = {
   user:'<path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>',
@@ -18,13 +19,15 @@ const groups = [
     { l:'Work',    i:'briefcase', a:'#work' },
     { l:'Skills',  i:'code',      a:'#skills' },
     { l:'Now',     i:'clock',     a:'#now' },
-    { l:'Writing', i:'edit',      a:'#writing' },
+    { l:'Process', i:'edit',      a:'#process' },
+    { l:'Testimonials', i:'user', a:'#testimonials' },
+    { l:'Resume',  i:'briefcase', a:'#resume' },
     { l:'Contact', i:'mail',      a:'#contact' },
   ]},
   { g:'Links', items:[
-    { l:'GitHub',   i:'github',   a:'https://github.com/michaelomale' },
-    { l:'LinkedIn', i:'linkedin', a:'https://linkedin.com/in/michaelomale' },
-    { l:'Email',    i:'mail',     a:'mailto:hello@michaelomale.dev' },
+    { l:'GitHub',   i:'github',   a:LINKS.githubUrl },
+    { l:'LinkedIn', i:'linkedin', a:LINKS.linkedinUrl },
+    { l:'Email',    i:'mail',     a:`mailto:${LINKS.email}` },
   ]},
 ];
 

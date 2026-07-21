@@ -13,23 +13,19 @@ const CELL = 10;
 const GAP = 2;
 const DAYS = ['', 'Mon', '', 'Wed', '', 'Fri', ''];
 
-export default function ContributionGraph({ token }) {
-  const [data, setData] = useState(null);
+export default function ContributionGraph() {
+  const [data, setData] = useState(undefined); // undefined = loading, null = unavailable
 
   useEffect(() => {
-    fetchContributions(token).then(setData);
-  }, [token]);
+    fetchContributions().then(setData);
+  }, []);
+
+  if (data === undefined) {
+    return <div className="contrib-placeholder contrib-placeholder--loading" aria-busy="true" />;
+  }
 
   if (!data) {
-    return (
-      <div className="contrib-placeholder">
-        {token ? 'Loading…' : (
-          <span style={{ color: 'var(--text-dim)', fontSize: 'var(--fs-small)', fontFamily: 'var(--font-mono)' }}>
-            Set <code>VITE_GITHUB_TOKEN</code> to show contribution activity
-          </span>
-        )}
-      </div>
-    );
+    return null; // gracefully hide -- no broken-looking placeholder box
   }
 
   const weeks = data.weeks || [];
