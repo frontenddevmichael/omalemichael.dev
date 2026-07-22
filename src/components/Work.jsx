@@ -65,17 +65,21 @@ const repoIcon = (
 
 export default function Work() {
   const [repos, setRepos] = useState(null);
+  const [reposError, setReposError] = useState(false);
   const [activeTag, setActiveTag] = useState('All');
   const [selectedProject, setSelectedProject] = useState(null);
   const [commits, setCommits] = useState({});
   const [activity, setActivity] = useState({});
   const gridRef = useRef(null);
 
-  useEffect(() => {
+  const loadRepos = useCallback(() => {
+    setReposError(false);
     fetchRepos()
       .then(data => setRepos(data))
-      .catch(() => setRepos([]));
+      .catch(() => { setRepos([]); setReposError(true); });
   }, []);
+
+  useEffect(() => { loadRepos(); }, [loadRepos]);
 
   // Fetch latest commit for each repo on load (parallel)
   useEffect(() => {
@@ -279,6 +283,14 @@ export default function Work() {
           </div>
         </div>
       </div>
+
+      {reposError && (
+        <div className="api-notice stagger-up">
+          <span className="api-notice-icon">!</span>
+          <span>Couldn&rsquo;t load repos from GitHub. Showing static projects.</span>
+          <button className="api-notice-btn" onClick={loadRepos}>Retry</button>
+        </div>
+      )}
 
       {/* Tag filters */}
       {tags.length > 2 && (

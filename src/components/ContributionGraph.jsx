@@ -69,6 +69,7 @@ function AnimatedCount({ value, suffix = '' }) {
 
 export default function ContributionGraph() {
   const [data, setData] = useState(undefined);
+  const [error, setError] = useState(false);
   const [inView, setInView] = useState(false);
   const [tooltip, setTooltip] = useState(null);
   const [dayCommits, setDayCommits] = useState({});
@@ -78,7 +79,12 @@ export default function ContributionGraph() {
   const CELL = useCellSize();
   const COL_W = CELL + GAP;
 
-  useEffect(() => { fetchContributions().then(setData); }, []);
+  const load = useCallback(() => {
+    setError(false);
+    fetchContributions().then(d => { if (!d) setError(true); setData(d); });
+  }, []);
+
+  useEffect(() => { load(); }, [load]);
   useEffect(() => {
     const el = rootRef.current;
     if (!el) return;
@@ -163,7 +169,14 @@ export default function ContributionGraph() {
 
   return (
     <div ref={rootRef} className={`contrib${inView ? ' contrib--visible' : ''}`}>
-      {data === undefined && <div className="contrib-placeholder contrib-placeholder--loading" aria-busy="true" />}
+      {data === undefined && !error && <div className="contrib-placeholder contrib-placeholder--loading" aria-busy="true" />}
+      {error && (
+        <div className="api-notice">
+          <span className="api-notice-icon">!</span>
+          <span>Couldn&rsquo;t load contribution data.</span>
+          <button className="api-notice-btn" onClick={load}>Retry</button>
+        </div>
+      )}
       {data && (<>
       <div className="contrib-head">
         <div className="contrib-head-stats">
