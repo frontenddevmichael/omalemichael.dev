@@ -13,6 +13,7 @@ export default function BigM() {
               grids={grids}
               onColor="#F5F5F5"
               offColor="#1a1a1a"
+              size={196}
             />
           </div>
         ))}

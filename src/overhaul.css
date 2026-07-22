@@ -301,7 +301,7 @@
 /* --- Big M decor section --- */
 .big-m {
   position: relative;
-  height: 200px;
+  height: 210px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -318,14 +318,12 @@
   opacity: 0.6;
   transition: opacity 0.6s var(--ease-out);
 }
-.big-m-cell > * { transform: scale(7); }
-.big-m-cell circle.on { fill: #F5F5F5 !important; }
 .big-m:hover .big-m-cell { opacity: 0.9; }
 @media (max-width: 600px) {
-  .big-m { height: 120px; transform: scale(1); opacity: 1; }
+  .big-m { height: 130px; }
   .big-m-cell { opacity: 0.5; }
-  .big-m-cell > * { transform: scale(3.5); }
   .big-m-row { gap: 3px; }
+  .big-m-cell .big-m-cell > * > svg { width: 68px !important; height: 68px !important; }
 }
 
 /* --- Testimonials moved to Testimonials.css --- */
