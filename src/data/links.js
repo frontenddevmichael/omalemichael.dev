@@ -8,5 +8,9 @@ export const LINKS = {
   email: 'omalemcmails@gmail.com',
   whatsapp: 'https://wa.me/2349061712509',
   whatsappDisplay: '+234 906 171 2509',
-  siteUrl: 'https://michaelomale.dev',
+  bank: {
+    bank: 'OPay',
+    name: 'Michael Omale',
+    number: '9061712509',
+  },
 };

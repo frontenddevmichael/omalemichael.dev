@@ -229,7 +229,6 @@
 /* --- where there's actually room for it.                            --- */
 @media (min-width: 900px) {
   .proj-grid--bento { grid-template-columns: repeat(3, 1fr); }
-  .proj--wide { grid-column: span 2; }
 }
 
 @media (max-width: 480px) {
@@ -293,27 +292,15 @@
   .process-body h3 { font-size: var(--fs-body); }
   .process-body p { font-size: 0.625rem; }
 }
-
-.process-body h3 { font-size: var(--fs-h3); font-weight: 550; color: var(--text-soft); margin-bottom: 6px; }
-.process-body p { color: var(--text-muted); font-size: var(--fs-small); line-height: var(--lh-body); max-width: 46ch; }
-
-/* --- Testimonials --- */
-.testimonial-note {
-  display: flex; align-items: center; gap: 10px;
-  font-family: var(--font-mono); font-size: var(--fs-small); color: var(--text-dim);
-  border: 1px dashed var(--border-light); border-radius: var(--radius-sm);
-  padding: 10px 14px; margin-bottom: var(--space-lg);
+@media (max-width: 400px) {
+  .process-step { gap: var(--space-sm); padding: var(--space-sm) 0; }
+  .process-body p { font-size: 0.5625rem; }
 }
-.testimonial-grid { display: grid; grid-template-columns: 1fr; gap: var(--space-md); }
-@media (min-width: 601px) { .testimonial-grid { grid-template-columns: 1fr 1fr; } }
-.testimonial-card {
-  border: 1px solid var(--border); border-radius: var(--radius-md);
-  padding: var(--space-lg); background: var(--surface-2);
-}
-.testimonial-card p { color: var(--text-soft); font-size: var(--fs-body); line-height: var(--lh-body); font-style: italic; margin-bottom: var(--space-md); }
-.testimonial-card footer { display: flex; flex-direction: column; gap: 2px; }
-.t-name { color: var(--text-soft); font-size: var(--fs-small); font-weight: 550; }
-.t-role { color: var(--text-dim); font-size: var(--fs-label); font-family: var(--font-mono); }
+
+.process-body h3 { font-size: var(--fs-h3); font-weight: 550; color: var(--text-soft); margin-bottom: 6px; position:relative; z-index:1; }
+.process-body p { color: var(--text-muted); font-size: var(--fs-small); line-height: var(--lh-body); max-width: 46ch; position:relative; z-index:1; }
+
+/* --- Testimonials moved to Testimonials.css --- */
 
 /* --- Contribution graph: loading + mobile horizontal scroll --- */
 .contrib-placeholder--loading {

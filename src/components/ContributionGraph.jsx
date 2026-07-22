@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { fetchContributions, fetchCommitsByDate } from '../utils/github';
 
 const GAP = 2;
@@ -6,6 +6,16 @@ const NUM_COL = 20;
 const DAYS = ['', 'Mon', '', 'Wed', '', 'Fri', ''];
 const LEVELS = ['#161b22', '#0e4429', '#006d32', '#26a641', '#39d353'];
 const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+function useCellSize() {
+  const [size, setSize] = useState(() => window.innerWidth < 600 ? 14 : 10);
+  useEffect(() => {
+    function update() { setSize(window.innerWidth < 600 ? 14 : 10); }
+    window.addEventListener('resize', update);
+    return () => window.removeEventListener('resize', update);
+  }, []);
+  return size;
+}
 
 function getLevel(c) {
   if (c === 0) return 0;
@@ -63,8 +73,9 @@ export default function ContributionGraph() {
   const [tooltip, setTooltip] = useState(null);
   const [dayCommits, setDayCommits] = useState({});
   const rootRef = useRef(null);
+  const wrapRef = useRef(null);
 
-  const CELL = useMemo(() => typeof window !== 'undefined' && window.innerWidth < 600 ? 14 : 10, []);
+  const CELL = useCellSize();
   const COL_W = CELL + GAP;
 
   useEffect(() => { fetchContributions().then(setData); }, []);
@@ -78,12 +89,26 @@ export default function ContributionGraph() {
     return () => obs.disconnect();
   }, []);
 
+  useEffect(() => {
+    if (!data || !wrapRef.current) return;
+    wrapRef.current.scrollLeft = wrapRef.current.scrollWidth;
+  }, [data]);
+
   const onCellEnter = useCallback((e, day, dateStr) => {
     const cr = e.target.closest('.contrib').getBoundingClientRect();
     const rr = e.target.getBoundingClientRect();
-    setTooltip({ x: rr.left - cr.left + rr.width / 2, y: rr.top - cr.top, date: dateStr, count: day.contributionCount });
+    const isMobile = window.innerWidth < 600;
+    setTooltip({
+      x: rr.left - cr.left + rr.width / 2,
+      y: isMobile ? rr.top - cr.top + rr.height + 8 : rr.top - cr.top,
+      date: dateStr, count: day.contributionCount,
+      below: isMobile,
+    });
     if (!dayCommits[dateStr] && day.contributionCount > 0) {
-      fetchCommitsByDate(dateStr).then(c => setDayCommits(p => ({ ...p, [dateStr]: c || [] })));
+      if (onCellEnter._t) clearTimeout(onCellEnter._t);
+      onCellEnter._t = setTimeout(() => {
+        fetchCommitsByDate(dateStr).then(c => setDayCommits(p => ({ ...p, [dateStr]: c || [] })));
+      }, 300);
     }
   }, [dayCommits]);
   const onCellLeave = useCallback(() => setTooltip(null), []);
@@ -167,7 +192,7 @@ export default function ContributionGraph() {
         {isMock && <span className="contrib-mock-badge">mock</span>}
       </div>
 
-      <div className="contrib-svg-wrap">
+      <div className="contrib-svg-wrap" ref={wrapRef}>
         <svg width={w} height={h + 36} className="contrib-svg">
           {weeks.map((week, wi) => {
             const fd = week.contributionDays?.[0];
@@ -228,7 +253,7 @@ export default function ContributionGraph() {
         </div>
       </div>
 
-      {tooltip && <div className="contrib-tip" style={{ left: tooltip.x, top: tooltip.y }}>
+      {tooltip && <div className={`contrib-tip${tooltip.below ? ' contrib-tip--below' : ''}`} style={{ left: tooltip.x, top: tooltip.y }}>
         <div className="tip-date">{tooltip.date}</div>
         <div className="tip-count">{tooltip.count} contribution{tooltip.count !== 1 ? 's' : ''}</div>
         {dayCommits[tooltip.date] && dayCommits[tooltip.date].length > 0 && (

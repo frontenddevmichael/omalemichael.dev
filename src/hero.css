@@ -148,6 +148,8 @@
 }
 .btn:hover { background:var(--surface-3); border-color:var(--border-light); color:var(--text); }
 .btn:active { transform:scale(0.97); }
+.btn svg { transition:transform var(--fast) var(--ease-out); }
+.btn:hover svg { transform:translateX(2px); }
 
 @media (max-width:600px) {
   .hero { padding:5rem var(--space-md) 3rem; padding-top:calc(5rem + env(safe-area-inset-top, 0px)); min-height:92dvh; }

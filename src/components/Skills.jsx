@@ -1,35 +1,145 @@
-import { useRef } from 'react';
+import { useRef, useEffect, useCallback } from 'react';
 import SpecSection from './SpecSection';
+import './Skills.css';
 
-const TOOLS = [
-  { name: 'React', bar: 95 },
-  { name: 'TypeScript', bar: 90 },
-  { name: 'JavaScript', bar: 88 },
-  { name: 'Node.js', bar: 85 },
-  { name: 'Python', bar: 78 },
-  { name: 'Supabase', bar: 85 },
-  { name: 'CSS / Tailwind', bar: 88 },
-  { name: 'Git', bar: 92 },
+const SKILLS = [
+  'Claude', 'Supabase', 'Firebase', 'Appwrite',
+  'VS Code', 'GitHub', 'Vercel',
+  'JavaScript', 'React', 'CSS', 'HTML'
 ];
 
+const IH = 84;
+const CP = 3;
+const ITEMS = Array.from({ length: CP }, () => SKILLS).flat();
+const TH = ITEMS.length * IH;
+
 export default function Skills() {
-  const sectionRef = useRef(null);
+  const ref = useRef(null);
+  const rf = useRef(null);
+  const sy = useRef(0);
+  const vel = useRef(1.8);
+  const py = useRef(null);
+  const ly = useRef(0);
+  const lt = useRef(0);
+  const ci = useRef(-1);
+
+  useEffect(() => {
+    lt.current = performance.now();
+    const loop = now => {
+      const el = ref.current;
+      if (!el) { rf.current = requestAnimationFrame(loop); return; }
+      const ch = el.clientHeight || 480;
+      const dt = Math.min((now - lt.current) / 1000, 0.05);
+      lt.current = now;
+
+      if (py.current !== null) {
+        const diff = py.current - ch / 2 - ((-sy.current) % IH);
+        vel.current += diff * 0.002;
+        vel.current *= 0.9;
+      } else {
+        vel.current += (1.8 - vel.current) * 0.01;
+      }
+
+      sy.current += vel.current;
+      sy.current = ((sy.current % TH) + TH) % TH;
+
+      let nearIdx = 0;
+      let nearDist = Infinity;
+      const children = [...el.children];
+
+      for (let i = 0; i < ITEMS.length; i++) {
+        const c = children[i];
+        if (!c) continue;
+        let y = i * IH + sy.current;
+        y = ((y % TH) + TH) % TH;
+        let vy = y;
+        if (vy > TH / 2) vy -= TH;
+        const d = Math.abs(vy - ch / 2);
+        const p = Math.max(0, 1 - d / (ch * 0.5));
+        const s = p * p * (3 - 2 * p);
+        const scale = 0.2 + s * 0.8;
+        const opacity = 0.04 + s * 0.96;
+        const z = Math.round(s * 100);
+        c.style.transform = `translateY(${vy - ch / 2}px) scale(${scale})`;
+        c.style.opacity = opacity;
+        if (z !== c._z) { c._z = z; c.style.zIndex = z; }
+        if (d < nearDist) { nearDist = d; nearIdx = i; }
+      }
+
+      if (nearIdx !== ci.current) {
+        if (ci.current >= 0 && children[ci.current]) children[ci.current].classList.remove('sk-inf-item--center');
+        ci.current = nearIdx;
+        if (children[nearIdx]) children[nearIdx].classList.add('sk-inf-item--center');
+        if ('vibrate' in navigator) {
+          try { navigator.vibrate(8); } catch (_) {}
+        }
+      }
+
+      rf.current = requestAnimationFrame(loop);
+    };
+    rf.current = requestAnimationFrame(loop);
+    return () => { if (rf.current) cancelAnimationFrame(rf.current); };
+  }, []);
+
+  const onDown = useCallback(e => {
+    const y = e.clientY ?? e.touches?.[0]?.clientY ?? 0;
+    py.current = y;
+    ly.current = y;
+  }, []);
+
+  const onMove = useCallback(e => {
+    if (py.current === null) return;
+    const y = e.clientY ?? e.touches?.[0]?.clientY;
+    if (y == null) return;
+    py.current = y;
+    const dy = y - ly.current;
+    ly.current = y;
+    if (Math.abs(dy) > 1) {
+      sy.current += dy;
+      vel.current = dy * 0.3;
+    }
+  }, []);
+
+  const onUp = useCallback(() => {
+    py.current = null;
+  }, []);
+
+  const onClick = useCallback(e => {
+    const t = e.target?.closest?.('.sk-inf-item');
+    if (!t || !ref.current) return;
+    const i = Array.from(ref.current.children).indexOf(t);
+    if (i < 0) return;
+    const ch = ref.current.clientHeight || 480;
+    const target = ch / 2 - i * IH;
+    sy.current = ((target % TH) + TH) % TH;
+    vel.current = 0;
+    if ('vibrate' in navigator) {
+      try { navigator.vibrate(12); } catch (_) {}
+    }
+  }, []);
 
   return (
-    <SpecSection id="skills" num="03" title="Skills" sectionRef={sectionRef} style={{ position: 'relative', overflow: 'hidden' }}>
-      <div className="sk-kinetic" style={{ position: 'relative', zIndex: 1 }}>
-        {TOOLS.map((tool, i) => (
-          <div
-            key={tool.name}
-            className={`sk-row stagger-up ${i % 2 === 0 ? 'sk-row--right' : 'sk-row--left'}`}
-            style={{ '--idx': i }}
-          >
-            <span className="sk-bar" />
-            <span className="sk-name">{tool.name}</span>
-            <span className="sk-num">{tool.bar}%</span>
+    <SpecSection id="skills" num="03" title="Skills &amp; Tools">
+      <div
+        ref={ref}
+        className="sk-inf stagger-up"
+        onPointerDown={onDown}
+        onPointerMove={onMove}
+        onPointerUp={onUp}
+        onPointerLeave={onUp}
+        onTouchStart={onDown}
+        onTouchMove={onMove}
+        onTouchEnd={onUp}
+        onClick={onClick}
+        role="listbox"
+        aria-label="Skills"
+      >
+        {ITEMS.map((name, i) => (
+          <div key={i} className="sk-inf-item" role="option" aria-label={name}>
+            <span className="sk-inf-index">{String((i % SKILLS.length) + 1).padStart(2, '0')}</span>
+            <span className="sk-inf-name">{name}</span>
           </div>
         ))}
-        <div className="sk-connector" aria-hidden="true" />
       </div>
     </SpecSection>
   );

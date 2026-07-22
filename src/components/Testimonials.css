@@ -1,0 +1,80 @@
+.ts-outer {
+  position: relative;
+  overflow: hidden;
+  mask-image: linear-gradient(to right, transparent 0%, #000 3%, #000 97%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 3%, #000 97%, transparent 100%);
+}
+.ts-track {
+  display: flex;
+  gap: 16px;
+  padding: 8px 0;
+  position: relative;
+  z-index: 1;
+  will-change: transform;
+}
+.ts-card {
+  flex: 0 0 50%;
+  position: relative;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--space-md) var(--space-lg) var(--space-md);
+  background: var(--surface);
+  min-height: 130px;
+  display: flex;
+  flex-direction: column;
+  transition: border-color 300ms var(--ease-out), box-shadow 300ms var(--ease-out);
+}
+.ts-card:hover {
+  border-color: var(--border-light);
+  box-shadow: 0 8px 28px rgba(0,0,0,0.08);
+  transform: scale(1.01);
+}
+.ts-mark {
+  position: absolute;
+  top: 10px;
+  left: 14px;
+  color: var(--text);
+  opacity: 0.06;
+  pointer-events: none;
+}
+.ts-stars {
+  position: relative;
+  display: inline-flex;
+  gap: 2px;
+  margin-bottom: 4px;
+}
+.ts-star { stroke: var(--text-dim); stroke-width: 0.5; fill: none; }
+.ts-star--on { fill: var(--text); stroke: var(--text); }
+.ts-quote {
+  position: relative;
+  color: var(--text-muted);
+  font-size: var(--fs-small);
+  line-height: 1.55;
+  flex: 1;
+}
+.ts-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  margin-top: var(--space-sm);
+  padding-top: 6px;
+  border-top: 1px solid var(--border);
+}
+.ts-name { color: var(--text-soft); font-size: var(--fs-label); font-weight: 550; }
+.ts-role { color: var(--text-dim); font-size: 11px; font-family: var(--font-mono); }
+
+@media (max-width: 900px) {
+  .ts-card { flex: 0 0 60%; }
+  .ts-outer { mask-image: linear-gradient(to right, transparent 0%, #000 3%, #000 97%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 3%, #000 97%, transparent 100%); }
+}
+@media (max-width: 600px) {
+  .ts-card { flex: 0 0 75%; padding: var(--space-sm) var(--space-md); min-height: 120px; }
+  .ts-quote { font-size: 12px; }
+  .ts-outer { mask-image: linear-gradient(to right, transparent 0%, #000 2%, #000 98%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 2%, #000 98%, transparent 100%); }
+}
+@media (max-width: 400px) {
+  .ts-card { min-height: 100px; }
+  .ts-quote { font-size: 11px; }
+}

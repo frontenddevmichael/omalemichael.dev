@@ -161,7 +161,12 @@ export default function HeroScene({ containerRef }) {
 
     let prevTime = performance.now();
     let raf;
+    let isVisible = true;
+    const visObs = new IntersectionObserver(([entry]) => { isVisible = entry.isIntersecting; }, { threshold: 0 });
+    visObs.observe(container);
+
     function animate() {
+      if (!isVisible) { raf = requestAnimationFrame(animate); return; }
       const now = performance.now();
       const delta = Math.min(0.05, (now - prevTime) / 1000);
       prevTime = now;
@@ -243,6 +248,7 @@ export default function HeroScene({ containerRef }) {
 
     return () => {
       cancelAnimationFrame(raf);
+      visObs.disconnect();
       window.removeEventListener('resize', resize);
       if (!isTouchDevice) document.removeEventListener('mousemove', onMouseMove);
       container.removeChild(renderer.domElement);

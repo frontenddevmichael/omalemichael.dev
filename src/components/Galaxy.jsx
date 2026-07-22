@@ -99,6 +99,9 @@ export default function Galaxy({ containerRef }) {
 
     let raf;
     let currentRotation = 0;
+    let isVisible = true;
+    const visObs = new IntersectionObserver(([entry]) => { isVisible = entry.isIntersecting; }, { threshold: 0 });
+    visObs.observe(container);
 
     function getScrollProgress() {
       const rect = container.getBoundingClientRect();
@@ -109,6 +112,7 @@ export default function Galaxy({ containerRef }) {
     }
 
     function animate() {
+      if (!isVisible) { raf = requestAnimationFrame(animate); return; }
       const progress = getScrollProgress();
       const targetRotation = progress * Math.PI * 1.2;
       currentRotation += (targetRotation - currentRotation) * 0.08;
@@ -139,6 +143,7 @@ export default function Galaxy({ containerRef }) {
 
     return () => {
       cancelAnimationFrame(raf);
+      visObs.disconnect();
       window.removeEventListener('resize', resize);
       container.removeChild(renderer.domElement);
       geo.dispose();
