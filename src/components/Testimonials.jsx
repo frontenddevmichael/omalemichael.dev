@@ -3,31 +3,31 @@ import './Testimonials.css';
 
 const TESTIMONIALS = [
   {
-    quote: 'Michael has a rare ability to translate complex requirements into clean, intuitive interfaces. His attention to detail and modern CSS architecture made our collaboration seamless.',
+    quote: 'Michael translates complex requirements into clean, intuitive interfaces. His attention to detail and modern CSS architecture made our collaboration seamless.',
     name: 'Sarah Adeyemi',
     role: 'Product Designer · Techstart',
     rating: 5,
   },
   {
-    quote: 'Working with Michael was a great experience. He delivered a responsive dashboard that performed flawlessly across all devices. His React expertise saved us weeks of development time.',
+    quote: 'He delivered a responsive dashboard that performed flawlessly across all devices. His React expertise saved us weeks of development time.',
     name: 'Emeka Okafor',
     role: 'Founder · Kode Labs',
     rating: 5,
   },
   {
-    quote: 'Michael\'s site itself is the best proof of his skills — the animations, the graph integration, the attention to every pixel. He genuinely cares about the craft.',
+    quote: 'Michael\'s site itself is the best proof of his skills — the animations, the graph integration, every pixel. He genuinely cares about the craft.',
     name: 'Chioma Nwosu',
     role: 'Engineering Lead · PayConnect',
     rating: 4,
   },
   {
-    quote: 'I hired Michael for a freelance UI refresh and was impressed by his speed and communication. He improved our Lighthouse scores significantly while making the site look modern.',
+    quote: 'I hired Michael for a freelance UI refresh. He improved our Lighthouse scores significantly while making the site look modern.',
     name: 'Tunde Balogun',
     role: 'CEO · Helpa',
     rating: 5,
   },
   {
-    quote: 'Michael consistently writes some of the cleanest code I\'ve reviewed. His component architecture is thoughtful, his CSS is maintainable, and he always considers accessibility from the start.',
+    quote: 'Michael writes some of the cleanest code I\'ve reviewed. His CSS is maintainable, and he always considers accessibility from the start.',
     name: 'Kelechi Ani',
     role: 'Senior Engineer · Moniepoint',
     rating: 5,

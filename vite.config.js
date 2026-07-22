@@ -129,4 +129,5 @@ function githubReposDevMiddleware(mode) {
 
 export default defineConfig(({ mode }) => ({
   plugins: [react(), githubContributionsDevMiddleware(mode), githubReposDevMiddleware(mode)],
+  optimizeDeps: { include: ['flicker-dot'] },
 }))

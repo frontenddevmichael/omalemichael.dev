@@ -1,4 +1,9 @@
 import SpecSection from './SpecSection';
+import { FlickerSpinner } from 'flicker-dot';
+
+const DECOR_GRIDS = Array.from({ length: 8 }, () =>
+  Array.from({ length: 64 }, () => Math.random() < 0.18)
+);
 
 const STEPS = [
   {
@@ -31,8 +36,16 @@ const STEPS = [
 export default function Process() {
   return (
     <SpecSection id="process" num="05" title="Process">
-      <div className="process-list">
-        {STEPS.map((s, i) => (
+      <div className="process-section-wrap" style={{ position: 'relative' }}>
+        <div className="process-decor" aria-hidden="true">
+          <FlickerSpinner
+            grids={DECOR_GRIDS}
+            onColor="#F5F5F5"
+            offColor="#1a1a1a"
+          />
+        </div>
+        <div className="process-list">
+          {STEPS.map((s, i) => (
           <div key={s.n} className="process-step stagger-left" style={{ transitionDelay: `${i * 120}ms` }}>
             <span className="process-num">{s.n}</span>
             <div className="process-body">
@@ -44,7 +57,8 @@ export default function Process() {
               </span>
             )}
           </div>
-        ))}
+          ))}
+        </div>
       </div>
     </SpecSection>
   );

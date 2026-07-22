@@ -11,6 +11,7 @@ import Testimonials from './components/Testimonials';
 import Resume from './components/Resume';
 import Contact from './components/Contact';
 import Support from './components/Support';
+import BigM from './components/BigM';
 import Footer from './components/Footer';
 import CommandPalette from './components/CommandPalette';
 import ScrollProgress from './components/ScrollProgress';
@@ -104,6 +105,7 @@ function App() {
           <span className="l">Contact</span>
         </div>
         <Contact />
+        <BigM />
         <div className="gap-sec stagger-up">
           <span className="num">09</span>
           <span className="l">Support</span>
