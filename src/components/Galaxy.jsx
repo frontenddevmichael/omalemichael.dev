@@ -1,5 +1,8 @@
 import { useEffect } from 'react';
-import * as THREE from 'three';
+import {
+  BufferGeometry, BufferAttribute, PointsMaterial,
+  Points, Scene, PerspectiveCamera, WebGLRenderer, AdditiveBlending,
+} from 'three';
 
 const PARTICLE_COUNT = 8000;
 const ARMS = 3;
@@ -62,30 +65,30 @@ export default function Galaxy({ containerRef }) {
     if (!container) return;
 
     const { positions, colors } = generateGalaxyData();
-    const geo = new THREE.BufferGeometry();
-    geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+    const geo = new BufferGeometry();
+    geo.setAttribute('position', new BufferAttribute(positions, 3));
+    geo.setAttribute('color', new BufferAttribute(colors, 3));
 
-    const mat = new THREE.PointsMaterial({
+    const mat = new PointsMaterial({
       size: 0.035,
       vertexColors: true,
       transparent: true,
       opacity: 0.9,
-      blending: THREE.AdditiveBlending,
+      blending: AdditiveBlending,
       depthWrite: false,
       sizeAttenuation: true,
     });
 
-    const galaxy = new THREE.Points(geo, mat);
+    const galaxy = new Points(geo, mat);
     galaxy.position.x = 4.5;
-    const scene = new THREE.Scene();
+    const scene = new Scene();
     scene.add(galaxy);
 
-    const camera = new THREE.PerspectiveCamera(60, container.clientWidth / container.clientHeight, 0.1, 100);
+    const camera = new PerspectiveCamera(60, container.clientWidth / container.clientHeight, 0.1, 100);
     camera.position.set(0, 2.5, 7);
     camera.lookAt(0, 0, 0);
 
-    const renderer = new THREE.WebGLRenderer({
+    const renderer = new WebGLRenderer({
       alpha: true,
       antialias: true,
     });

@@ -1,4 +1,3 @@
-import { motion } from 'motion/react';
 import SpecSection from './SpecSection';
 import './Testimonials.css';
 
@@ -52,13 +51,8 @@ function Stars({ count }) {
 export default function Testimonials() {
   return (
     <SpecSection id="testimonials" num="06" title="Testimonials">
-      <div className="ts-outer" role="region" aria-label="Testimonials">
-        <motion.div
-          className="ts-track"
-          animate={{ x: ['0%', '-50%'] }}
-          transition={{ repeat: Infinity, duration: 12, ease: 'linear' }}
-          whileHover={{ transition: { duration: 0 } }}
-        >
+        <div className="ts-outer" role="region" aria-label="Testimonials">
+        <div className="ts-track">
           {ITEMS.map((t, i) => (
             <div key={i} className="ts-card">
               <svg className="ts-mark" viewBox="0 0 24 20" width="40" height="34" aria-hidden="true">
@@ -72,7 +66,7 @@ export default function Testimonials() {
               </footer>
             </div>
           ))}
-        </motion.div>
+        </div>
       </div>
     </SpecSection>
   );

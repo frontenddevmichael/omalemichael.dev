@@ -1,5 +1,9 @@
 import { useEffect } from 'react';
-import * as THREE from 'three';
+import {
+  CanvasTexture, Scene, PerspectiveCamera, WebGLRenderer,
+  GridHelper, BufferGeometry, BufferAttribute, PointsMaterial,
+  Points, SpriteMaterial, Sprite, AdditiveBlending,
+} from 'three';
 import { REACT_PATH, FIGMA_PATH, GITHUB_PATH, SUPABASE_PATH, CLAUDE_PATH } from '../data/logoPaths';
 
 const ICONS = [
@@ -24,7 +28,7 @@ function makeTexture(icon, size) {
   ctx.scale(scale, scale);
   try { ctx.fill(new Path2D(icon.path)); } catch (e) {}
   ctx.setTransform(1, 0, 0, 1, 0, 0);
-  const texture = new THREE.CanvasTexture(canvas);
+  const texture = new CanvasTexture(canvas);
   texture.needsUpdate = true;
   return texture;
 }
@@ -59,12 +63,12 @@ export default function HeroScene({ containerRef }) {
     const POUR_COUNT = isMobile ? 80 : 500;
     const dustCount = isMobile ? 20 : 60;
 
-    const scene = new THREE.Scene();
+    const scene = new Scene();
     const aspect = container.clientHeight > 0 ? container.clientWidth / container.clientHeight : 1;
-    const camera = new THREE.PerspectiveCamera(50, aspect, 0.1, 100);
+    const camera = new PerspectiveCamera(50, aspect, 0.1, 100);
     camera.position.set(0, 0, 8);
 
-    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+    const renderer = new WebGLRenderer({ alpha: true, antialias: true });
     renderer.setPixelRatio(isMobile ? Math.min(devicePixelRatio, 1) : Math.min(devicePixelRatio, 2));
     renderer.setSize(container.clientWidth, container.clientHeight);
     renderer.setClearColor(0x000000, 0);
@@ -75,30 +79,30 @@ export default function HeroScene({ containerRef }) {
     renderer.domElement.setAttribute('aria-hidden', 'true');
     container.appendChild(renderer.domElement);
 
-    const grid = new THREE.GridHelper(20, 20, 0xffffff, 0xffffff);
+    const grid = new GridHelper(20, 20, 0xffffff, 0xffffff);
     grid.position.y = -3.5;
     grid.material.transparent = true;
     grid.material.opacity = 0.08;
     scene.add(grid);
 
-    const dustGeo = new THREE.BufferGeometry();
+    const dustGeo = new BufferGeometry();
     const dustPos = new Float32Array(dustCount * 3);
     for (let i = 0; i < dustCount; i++) {
       dustPos[i * 3] = (Math.random() - 0.5) * 16;
       dustPos[i * 3 + 1] = (Math.random() - 0.5) * 10;
       dustPos[i * 3 + 2] = -2 - Math.random() * 4;
     }
-    dustGeo.setAttribute('position', new THREE.BufferAttribute(dustPos, 3));
-    const dustMat = new THREE.PointsMaterial({ color: 0xffffff, size: 0.02, transparent: true, opacity: 0.3 });
-    const dust = new THREE.Points(dustGeo, dustMat);
+    dustGeo.setAttribute('position', new BufferAttribute(dustPos, 3));
+    const dustMat = new PointsMaterial({ color: 0xffffff, size: 0.02, transparent: true, opacity: 0.3 });
+    const dust = new Points(dustGeo, dustMat);
     scene.add(dust);
 
     const items = [];
     ICONS.forEach((icon, i) => {
       const c = CORNERS[i];
       const texture = makeTexture(icon, SIZE);
-      const mat = new THREE.SpriteMaterial({ map: texture, transparent: true, opacity: 0.7, depthWrite: false });
-      const sprite = new THREE.Sprite(mat);
+      const mat = new SpriteMaterial({ map: texture, transparent: true, opacity: 0.7, depthWrite: false });
+      const sprite = new Sprite(mat);
       sprite.position.set(c.x, c.y, c.z);
       sprite.scale.set(c.s, c.s, 1);
       scene.add(sprite);
@@ -128,18 +132,18 @@ export default function HeroScene({ containerRef }) {
 
     for (let i = 0; i < POUR_COUNT; i++) initP(i, true);
 
-    const pGeo = new THREE.BufferGeometry();
-    pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
-    const pMat = new THREE.PointsMaterial({
+    const pGeo = new BufferGeometry();
+    pGeo.setAttribute('position', new BufferAttribute(pPos, 3));
+    const pMat = new PointsMaterial({
       color: 0xffffff,
       size: 0.1,
       transparent: true,
       opacity: 0.85,
-      blending: THREE.AdditiveBlending,
+      blending: AdditiveBlending,
       depthWrite: false,
       sizeAttenuation: true,
     });
-    const pMesh = new THREE.Points(pGeo, pMat);
+    const pMesh = new Points(pGeo, pMat);
     scene.add(pMesh);
 
     let mouse = { x: 0, y: 0 };

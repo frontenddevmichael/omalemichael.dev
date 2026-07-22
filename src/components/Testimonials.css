@@ -10,7 +10,15 @@
   padding: 8px 0;
   position: relative;
   z-index: 1;
+  width: fit-content;
+  animation: ts-scroll 12s linear infinite;
   will-change: transform;
+}
+.ts-outer:hover .ts-track { animation-play-state: paused; }
+
+@keyframes ts-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
 }
 .ts-card {
   flex: 0 0 50%;
@@ -22,7 +30,7 @@
   min-height: 130px;
   display: flex;
   flex-direction: column;
-  transition: border-color 300ms var(--ease-out), box-shadow 300ms var(--ease-out);
+  transition: border-color 300ms var(--ease-out), box-shadow 300ms var(--ease-out), transform 300ms var(--ease-out);
 }
 .ts-card:hover {
   border-color: var(--border-light);

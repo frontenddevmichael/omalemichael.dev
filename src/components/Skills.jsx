@@ -9,7 +9,7 @@ const SKILLS = [
 ];
 
 const IH = 84;
-const CP = 3;
+const CP = 2;
 const ITEMS = Array.from({ length: CP }, () => SKILLS).flat();
 const TH = ITEMS.length * IH;
 
