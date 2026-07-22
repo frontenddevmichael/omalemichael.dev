@@ -1,15 +1,51 @@
+import { useState, useEffect } from 'react';
 import SpecSection from './SpecSection';
 
 export default function About() {
+  const [expanded, setExpanded] = useState(false);
+  const [isMobile, setIsMobile] = useState(
+    () => typeof window !== 'undefined' && window.matchMedia('(max-width: 768px)').matches
+  );
+
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 768px)');
+    const handler = (e) => setIsMobile(e.matches);
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
+  }, []);
+
+  const paragraphs = [
+    "I'm a frontend developer and UI/UX designer based in Lagos, Nigeria, currently studying Computer Science at Bells University of Technology. I specialize in building responsive, accessible web interfaces with React, modern CSS, and a focus on usability.",
+    "I'm expanding into React Native for mobile apps while exploring AI-assisted development workflows with tools like Lovable and Bolt to accelerate prototyping and product innovation.",
+    "My goal is to merge design, code, and AI to build digital products that are not only functional but also intuitive and impactful. I'm passionate about clean UIs, component architecture, and creating experiences that users actually enjoy.",
+  ];
+
   return (
     <SpecSection id="about" num="01" title="About">
       <div className="about-grid">
         <div className="about-text stagger-up">
-          I'm a frontend developer and UI/UX designer based in Lagos, Nigeria, currently studying Computer Science at Bells University of Technology. I specialize in building responsive, accessible web interfaces with React, modern CSS, and a focus on usability.
+          <p>{paragraphs[0]}</p>
           <br /><br />
-          I'm expanding into React Native for mobile apps while exploring AI-assisted development workflows with tools like Lovable and Bolt to accelerate prototyping and product innovation.
-          <br /><br />
-          My goal is to merge design, code, and AI to build digital products that are not only functional but also intuitive and impactful. I'm passionate about clean UIs, component architecture, and creating experiences that users actually enjoy.
+          <p>{paragraphs[1]}</p>
+          {(!isMobile || expanded) && (
+            <>
+              <br /><br />
+              <p>{paragraphs[2]}</p>
+            </>
+          )}
+          {isMobile && (
+            <button
+              className="about-expand"
+              onClick={() => setExpanded((o) => !o)}
+              aria-expanded={expanded}
+            >
+              {expanded ? (
+                <>Show less <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><path d="M4 10l4-4 4 4"/></svg></>
+              ) : (
+                <>Read more <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><path d="M6 4l4 4-4 4"/></svg></>
+              )}
+            </button>
+          )}
         </div>
         <div className="metrics stagger-up">
           <div className="metric">

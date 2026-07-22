@@ -36,13 +36,22 @@
 .nav-burger {
   display: none;
   flex-direction: column;
+  align-items: center;
   justify-content: center;
   gap: 4px;
-  width: 32px;
-  height: 32px;
+  width: 44px;
+  height: 44px;
   background: transparent;
   border: none;
   padding: 0;
+}
+
+/* modal-close was 32x32 in index.css -- under the 44x44 touch target
+   minimum, same class of bug fixed for nav-burger/proj-filter above.
+   Expand the hit area without changing the visible icon size. */
+.modal-close {
+  width: 44px;
+  height: 44px;
 }
 .nav-burger span {
   display: block;
@@ -201,16 +210,32 @@
   border: 1px solid var(--border);
   border-radius: 999px;
   padding: 6px 14px;
-  transition: border-color var(--fast), color var(--fast), background var(--fast);
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  -webkit-tap-highlight-color: transparent;
+  transition: border-color var(--fast), color var(--fast), background var(--fast), transform var(--fast);
 }
 .proj-filter:hover { color: var(--text-muted); border-color: var(--border-light); }
+.proj-filter:active { transform: scale(0.96); }
 .proj-filter.active { color: var(--bg); background: var(--text); border-color: var(--text); }
 
 /* --- Bento grid: first card (post-filter) spans wider --- */
-.proj-grid--bento { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
-@media (min-width: 700px) {
+/* --- Bento grid: aligned to the SAME tier system as index.css       --- */
+/* --- (601-900 / 901-1199 / 1200+), not a separate breakpoint set.   --- */
+/* --- No unconditional base rule here -- index.css's tier rules for  --- */
+/* --- .proj-grid (1fr / 1fr 1fr / auto-fill 260px) are respected by  --- */
+/* --- default; --bento only adds a 3rd tier + wide-card spanning     --- */
+/* --- where there's actually room for it.                            --- */
+@media (min-width: 900px) {
   .proj-grid--bento { grid-template-columns: repeat(3, 1fr); }
   .proj--wide { grid-column: span 2; }
+}
+
+@media (max-width: 480px) {
+  .featured-proj-foot { flex-direction: column; align-items: flex-start; }
+  .fp-links { width: 100%; }
+  .fp-links .btn--ghost { flex: 1; justify-content: center; }
 }
 
 /* --- Process section --- */
@@ -230,6 +255,45 @@
   flex-shrink: 0;
   width: 2ch;
 }
+
+.process-connector {
+  position: absolute;
+  left: 2ch;
+  top: 0;
+  height: 100%;
+  width: 1px;
+  background: linear-gradient(to bottom, transparent, var(--border-light), var(--border), transparent);
+  pointer-events: none;
+  transform: scaleY(0);
+  transform-origin: top;
+}
+
+@keyframes connector-draw {
+  from { transform: scaleY(0); }
+  to   { transform: scaleY(1); }
+}
+
+.process-step.visible .process-connector {
+  animation: connector-draw 600ms var(--ease-out) var(--conn-delay, 0ms) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .process-connector {
+    transform: scaleY(1);
+  }
+  .process-step.visible .process-connector {
+    animation: none;
+  }
+}
+
+@media (max-width: 600px) {
+  .process-num { font-size: var(--fs-h2); width: 1.5ch; }
+  .process-step { gap: var(--space-md); padding: var(--space-md) 0; }
+  .process-connector { left: 1.5ch; }
+  .process-body h3 { font-size: var(--fs-body); }
+  .process-body p { font-size: 0.625rem; }
+}
+
 .process-body h3 { font-size: var(--fs-h3); font-weight: 550; color: var(--text-soft); margin-bottom: 6px; }
 .process-body p { color: var(--text-muted); font-size: var(--fs-small); line-height: var(--lh-body); max-width: 46ch; }
 
@@ -241,7 +305,7 @@
   padding: 10px 14px; margin-bottom: var(--space-lg);
 }
 .testimonial-grid { display: grid; grid-template-columns: 1fr; gap: var(--space-md); }
-@media (min-width: 700px) { .testimonial-grid { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 601px) { .testimonial-grid { grid-template-columns: 1fr 1fr; } }
 .testimonial-card {
   border: 1px solid var(--border); border-radius: var(--radius-md);
   padding: var(--space-lg); background: var(--surface-2);
@@ -260,29 +324,88 @@
 }
 @keyframes skeleton-shimmer { 0% { background-position: 100% 50%; } 100% { background-position: 0 50%; } }
 
-@media (max-width: 700px) {
+@media (max-width: 600px) {
   .contrib { position: relative; }
   .contrib-svg { display: block; overflow-x: auto; max-width: 100%; }
   .contrib { overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
   .contrib::-webkit-scrollbar { display: none; }
+  /* Legend (5 swatches + labels) doesn't fit next to the graph at phone
+     widths -- wrap it onto its own row instead of clipping. */
+  .contrib-legend { flex-wrap: wrap; row-gap: 4px; }
 }
 
-/* --- Command palette: full-screen sheet on mobile --- */
-@media (max-width: 640px) {
-  .pal-overlay { align-items: flex-end; padding: 0; }
-  .pal { width: 100%; max-width: 100%; height: 85vh; max-height: 85vh; border-radius: var(--radius-lg) var(--radius-lg) 0 0; }
+/* --- Reusable fade-mask for horizontally-scrollable rows (tag filters, --- */
+/* --- contribution graph) -- makes it visually obvious there's more to --- */
+/* --- scroll, instead of an ambiguous hard cut-off edge.               --- */
+.scroll-fade {
+  mask-image: linear-gradient(to right, transparent 0, black 16px, black calc(100% - 24px), transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0, black 16px, black calc(100% - 24px), transparent 100%);
+}
+
+/* --- Command palette: bottom-sheet on mobile --- */
+.pf-touch {
+  display: none;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-dim);
+}
+
+.pal-handle {
+  display: none;
+  width: 32px;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--border-light);
+  margin: 8px auto 0;
+}
+
+@media (max-width: 600px) {
+  .pal-overlay {
+    align-items: flex-end;
+    padding: 0;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    touch-action: pan-y;
+  }
+  .pal {
+    width: 100%;
+    max-width: 100%;
+    height: 85dvh;
+    max-height: 85dvh;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    transform: translateY(20px) scale(1);
+  }
+  .pal-overlay.open .pal {
+    transform: translateY(0) scale(1);
+  }
+  .pf-desk { display: none; }
+  .pf-touch { display: inline; }
+  .pal-handle { display: block; }
+  .pal-body {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
+  /* iOS Safari auto-zooms the page on focus if an input's font-size is
+     under 16px -- .pal-head input inherits --fs-body (13px). This is a
+     real, common mobile-web bug: fix it explicitly for this input. */
+  .pal-head input { font-size: 16px; }
+}
+
+@media (max-width: 400px) {
+  .pal {
+    height: 92dvh;
+    max-height: 92dvh;
+  }
 }
 
 /* --- Nav: hide desktop items / show burger below tablet width --- */
-@media (max-width: 780px) {
+@media (max-width: 899px) {
   .avail-loc { display: none; }
   .avail-sep { display: none; }
   .palette-btn span:not(.k) { display: none; }
 }
-@media (max-width: 560px) {
-  .avail-text { display: none; }
+@media (max-width: 600px) {
+  .avail-text, .palette-btn { display: none; }
   .avail-badge { padding: 6px 8px; }
-  .palette-btn { display: none; }
   .nav-burger { display: flex; }
 }
 
@@ -292,4 +415,14 @@
   .avail-badge .dot { animation: none; }
   .loading-cursor { animation: none; }
   .nav-sheet, .nav-sheet li, .nav-burger span { transition: none; }
+}
+
+/* --- Touch devices: hover-triggered transforms have no "un-hover" event --- */
+/* --- on tap, so cards/rows would otherwise stay visually shifted after  --- */
+/* --- being tapped. Reset the transform specifically (not color/border, --- */
+/* --- which are subtle enough to leave alone) for touch-only pointers.  --- */
+@media (hover: none) {
+  .proj:hover, .now-c:hover, .clink-card:hover, .metric:hover, .write:hover {
+    transform: none;
+  }
 }

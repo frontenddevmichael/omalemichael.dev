@@ -33,11 +33,11 @@ const SIZE = 256;
 
 function getCorners(isMobile) {
   if (isMobile) return [
-    { x: -2, y: 1.8, z: -1, s: 0.55 },
-    { x: 2, y: 1.8, z: -0.5, s: 0.55 },
-    { x: 0, y: -2.4, z: 0, s: 0.5 },
-    { x: -2.2, y: -1.4, z: -1.5, s: 0.55 },
-    { x: 2.2, y: -1.4, z: -1, s: 0.55 },
+    { x: -1.1, y: 2.0, z: -1, s: 0.45 },
+    { x: 1.1, y: 2.0, z: -0.5, s: 0.45 },
+    { x: 0, y: -2.2, z: 0, s: 0.4 },
+    { x: -1.2, y: -1.2, z: -1.5, s: 0.45 },
+    { x: 1.2, y: -1.2, z: -1, s: 0.45 },
   ];
   return [
     { x: -3, y: 2, z: -1, s: 0.7 },
@@ -48,15 +48,16 @@ function getCorners(isMobile) {
   ];
 }
 
-const POUR_COUNT = 500;
-
 export default function HeroScene({ containerRef }) {
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
 
     const isMobile = window.innerWidth < 600;
+    const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
     const CORNERS = getCorners(isMobile);
+    const POUR_COUNT = isMobile ? 80 : 500;
+    const dustCount = isMobile ? 20 : 60;
 
     const scene = new THREE.Scene();
     const aspect = container.clientHeight > 0 ? container.clientWidth / container.clientHeight : 1;
@@ -64,13 +65,14 @@ export default function HeroScene({ containerRef }) {
     camera.position.set(0, 0, 8);
 
     const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-    renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+    renderer.setPixelRatio(isMobile ? Math.min(devicePixelRatio, 1) : Math.min(devicePixelRatio, 2));
     renderer.setSize(container.clientWidth, container.clientHeight);
     renderer.setClearColor(0x000000, 0);
     renderer.domElement.style.position = 'absolute';
     renderer.domElement.style.inset = '0';
     renderer.domElement.style.zIndex = '0';
     renderer.domElement.style.pointerEvents = 'none';
+    renderer.domElement.setAttribute('aria-hidden', 'true');
     container.appendChild(renderer.domElement);
 
     const grid = new THREE.GridHelper(20, 20, 0xffffff, 0xffffff);
@@ -79,7 +81,6 @@ export default function HeroScene({ containerRef }) {
     grid.material.opacity = 0.08;
     scene.add(grid);
 
-    const dustCount = 60;
     const dustGeo = new THREE.BufferGeometry();
     const dustPos = new Float32Array(dustCount * 3);
     for (let i = 0; i < dustCount; i++) {
@@ -147,7 +148,9 @@ export default function HeroScene({ containerRef }) {
       mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
       mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
     }
-    document.addEventListener('mousemove', onMouseMove);
+    if (!isTouchDevice) {
+      document.addEventListener('mousemove', onMouseMove);
+    }
 
     function getScrollProgress() {
       const rect = container.getBoundingClientRect();
@@ -201,21 +204,24 @@ export default function HeroScene({ containerRef }) {
         item.mat.opacity = Math.min(1, (0.7 + hoverBoost + glowFactor * 0.25) * scrollFade);
       }
 
-      const pourFlow = mouse.x * 0.3;
+      // Pour particles — skip per-frame update on touch (low priority visual)
+      if (!isTouchDevice) {
+        const pourFlow = mouse.x * 0.3;
 
-      for (let i = 0; i < POUR_COUNT; i++) {
-        pLife[i] += delta;
-        if (pLife[i] > 2.5) { initP(i, false); continue; }
-        const progress = pLife[i] / 2.5;
-        pVelY[i] -= 4 * delta;
-        pPos[i * 3] += (pourFlow * 2 + (Math.random() - 0.5) * (0.5 + progress * 4)) * delta;
-        pPos[i * 3 + 1] += pVelY[i] * delta;
-        if (pPos[i * 3 + 1] < -4.5) { initP(i, false); }
+        for (let i = 0; i < POUR_COUNT; i++) {
+          pLife[i] += delta;
+          if (pLife[i] > 2.5) { initP(i, false); continue; }
+          const progress = pLife[i] / 2.5;
+          pVelY[i] -= 4 * delta;
+          pPos[i * 3] += (pourFlow * 2 + (Math.random() - 0.5) * (0.5 + progress * 4)) * delta;
+          pPos[i * 3 + 1] += pVelY[i] * delta;
+          if (pPos[i * 3 + 1] < -4.5) { initP(i, false); }
+        }
+        pGeo.attributes.position.needsUpdate = true;
+
+        pMat.size = 0.09 + Math.sin(time * 0.5) * 0.015;
+        pMat.opacity = 0.75 * scrollFade;
       }
-      pGeo.attributes.position.needsUpdate = true;
-
-      pMat.size = 0.09 + Math.sin(time * 0.5) * 0.015;
-      pMat.opacity = 0.75 * scrollFade;
 
       dustMat.opacity = 0.3 * scrollFade;
       grid.position.y = -3.5 + parallaxGrid;
@@ -238,7 +244,7 @@ export default function HeroScene({ containerRef }) {
     return () => {
       cancelAnimationFrame(raf);
       window.removeEventListener('resize', resize);
-      document.removeEventListener('mousemove', onMouseMove);
+      if (!isTouchDevice) document.removeEventListener('mousemove', onMouseMove);
       container.removeChild(renderer.domElement);
       renderer.dispose();
     };

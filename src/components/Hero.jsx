@@ -11,7 +11,7 @@ export default function Hero() {
   const reducedMotion = usePrefersReducedMotion();
 
   return (
-    <section className="hero" id="top" ref={sectionRef}>
+    <section className="hero" id="top" ref={sectionRef} aria-label="Hero introduction" role="region">
       {!reducedMotion && (
         <Suspense fallback={null}>
           <HeroScene containerRef={sectionRef} />
@@ -36,7 +36,7 @@ export default function Hero() {
             <span>View work</span>
           </a>
         </div>
-        <div className="scroll-hint">
+        <div className="scroll-hint" aria-hidden="true">
           <div className="sc-track">
             <div className="sc-drop"></div>
           </div>

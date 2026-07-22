@@ -57,10 +57,11 @@ function App() {
 
   return (
     <>
+      <a href="#main-content" className="skip-link">Skip to content</a>
       <LoadingScreen />
       <ScrollProgress />
       <Nav onOpenPalette={() => setPalOpen(true)} />
-      <main>
+      <main id="main-content">
         <Hero />
         <div className="gap-sec stagger-up">
           <span className="num">01</span>

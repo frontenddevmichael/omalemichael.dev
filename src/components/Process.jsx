@@ -39,7 +39,10 @@ export default function Process() {
               <h3>{s.t}</h3>
               <p>{s.d}</p>
             </div>
-            {i < STEPS.length - 1 && <span className="process-connector" aria-hidden="true"></span>}
+            {i < STEPS.length - 1 && (
+              <span className="process-connector" aria-hidden="true" style={{ '--conn-delay': `${i * 120 + 400}ms` }}>
+              </span>
+            )}
           </div>
         ))}
       </div>

@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { LINKS } from '../data/links';
+import { addScrollLock, removeScrollLock } from '../utils/scrollLock';
 
 const ipaths = {
   user:'<path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>',
@@ -42,8 +43,12 @@ export default function CommandPalette({ isOpen, onClose }) {
     if (isOpen) {
       setQuery('');
       setIdx(0);
+      addScrollLock(); // shared module-level counter
       setTimeout(() => inputRef.current?.focus(), 60);
+    } else {
+      removeScrollLock(); // shared module-level counter
     }
+    return () => { removeScrollLock(); }; // shared module-level counter
   }, [isOpen]);
 
   const filtered = groups.map(g => ({
@@ -96,17 +101,29 @@ export default function CommandPalette({ isOpen, onClose }) {
     }
   }, [idx]);
 
+  // On mobile, scroll the palette panel so input stays visible when keyboard opens
+  const onInputFocus = useCallback(() => {
+    if (('ontouchstart' in window || navigator.maxTouchPoints > 0) && window.innerWidth < 768) {
+      setTimeout(() => {
+        const pal = document.querySelector('.pal');
+        if (pal) pal.scrollIntoView({ block: 'start', behavior: 'smooth' });
+      }, 300);
+    }
+  }, []);
+
   return createPortal(
     <div className={`pal-overlay${isOpen ? ' open' : ''}`} onClick={onClose}>
       <div className="pal" onClick={e => e.stopPropagation()}>
+        <div className="pal-handle"></div>
         <div className="pal-head">
           <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round">
             <circle cx="7.5" cy="7.5" r="5"/><line x1="11" y1="11" x2="16" y2="16"/>
           </svg>
-          <input ref={inputRef} type="text" placeholder="Search commands…" autoComplete="off" spellCheck="false"
-            value={query} onChange={e => { setQuery(e.target.value); setIdx(0); }} />
+          <input ref={inputRef} type="text" placeholder="Search commands…" autoComplete="off" spellCheck="false" aria-label="Search commands"
+            value={query} onChange={e => { setQuery(e.target.value); setIdx(0); }}
+            onFocus={onInputFocus} />
         </div>
-        <div className="pal-body" ref={bodyRef}>
+        <div className="pal-body" ref={bodyRef} role="listbox" aria-label="Command list">
           {filtered.length === 0 && <div className="pal-empty">No results</div>}
           {filtered.map(g => (
             <div key={g.g}>
@@ -116,6 +133,8 @@ export default function CommandPalette({ isOpen, onClose }) {
                 return (
                   <div key={x.l}
                     className={`pal-item${ci === idx ? ' hl' : ''}`}
+                    role="option"
+                    aria-selected={ci === idx}
                     onClick={() => { setIdx(ci); act(); }}
                     onMouseEnter={() => setIdx(ci)}>
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" dangerouslySetInnerHTML={{__html: ipaths[x.i]}} />
@@ -129,9 +148,10 @@ export default function CommandPalette({ isOpen, onClose }) {
         </div>
         <div className="pal-foot">
           <div className="pf">
-            <span><kbd>&uarr;</kbd> <kbd>&darr;</kbd> navigate</span>
-            <span><kbd>&crarr;</kbd> open</span>
-            <span><kbd>Esc</kbd> close</span>
+            <span className="pf-desk"><kbd>&uarr;</kbd> <kbd>&darr;</kbd> navigate</span>
+            <span className="pf-desk"><kbd>&crarr;</kbd> open</span>
+            <span className="pf-desk"><kbd>Esc</kbd> close</span>
+            <span className="pf-touch">Tap a command to open</span>
           </div>
         </div>
       </div>
