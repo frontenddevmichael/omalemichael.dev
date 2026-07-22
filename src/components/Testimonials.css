@@ -21,13 +21,13 @@
   to { transform: translateX(-50%); }
 }
 .ts-card {
-  flex: 0 0 34%;
+  flex: 0 0 26%;
   position: relative;
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
   padding: var(--space-md) var(--space-lg) var(--space-md);
   background: var(--surface);
-  min-height: 130px;
+  min-height: 180px;
   display: flex;
   flex-direction: column;
   transition: border-color 300ms var(--ease-out), box-shadow 300ms var(--ease-out), transform 300ms var(--ease-out);
