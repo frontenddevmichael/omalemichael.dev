@@ -12,8 +12,8 @@ export default function BigM() {
             <FlickerSpinner
               grids={grids}
               onColor="#F5F5F5"
-              offColor="#1a1a1a"
-              size={196}
+              offColor="#000000"
+              size={84}
             />
           </div>
         ))}

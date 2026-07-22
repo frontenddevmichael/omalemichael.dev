@@ -105,12 +105,12 @@ function App() {
           <span className="l">Contact</span>
         </div>
         <Contact />
-        <BigM />
         <div className="gap-sec stagger-up">
           <span className="num">09</span>
           <span className="l">Support</span>
         </div>
         <Support />
+        <BigM />
         <div className="gap-sec stagger-up">
           <span className="num">End</span>
           <span className="l">Fin</span>
