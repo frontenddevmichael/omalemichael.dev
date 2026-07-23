@@ -7,15 +7,7 @@ const DAYS = ['', 'Mon', '', 'Wed', '', 'Fri', ''];
 const LEVELS = ['#161b22', '#0e4429', '#006d32', '#26a641', '#39d353'];
 const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
-function useCellSize() {
-  const [size, setSize] = useState(() => window.innerWidth < 600 ? 14 : 10);
-  useEffect(() => {
-    function update() { setSize(window.innerWidth < 600 ? 14 : 10); }
-    window.addEventListener('resize', update);
-    return () => window.removeEventListener('resize', update);
-  }, []);
-  return size;
-}
+const CELL = 10;
 
 function getLevel(c) {
   if (c === 0) return 0;
@@ -76,7 +68,6 @@ export default function ContributionGraph() {
   const rootRef = useRef(null);
   const wrapRef = useRef(null);
 
-  const CELL = useCellSize();
   const COL_W = CELL + GAP;
 
   const load = useCallback(() => {
@@ -206,7 +197,7 @@ export default function ContributionGraph() {
       </div>
 
       <div className="contrib-svg-wrap" ref={wrapRef}>
-        <svg width={w} height={h + 36} className="contrib-svg">
+        <svg width={w} height={h + 36} viewBox={`0 0 ${w} ${h + 36}`} className="contrib-svg">
           {weeks.map((week, wi) => {
             const fd = week.contributionDays?.[0];
             if (!fd?.date) return null;

@@ -1,13 +1,12 @@
 .sk-inf {
   position: relative;
-  height: clamp(360px, 70vh, 520px);
-  overflow: hidden;
+  min-height: clamp(300px, 60vh, 420px);
   cursor: grab;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
-  touch-action: none;
   mask-image: linear-gradient(to bottom, transparent 0%, #000 8%, #000 92%, transparent 100%);
   -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 8%, #000 92%, transparent 100%);
+  overscroll-behavior: contain;
 }
 .sk-inf:active { cursor: grabbing; }
 .sk-inf::after {

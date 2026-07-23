@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { vibrate } from '../utils/vibrate';
 
 const SECTIONS = [
   { l: 'About', a: '#about' },
@@ -67,7 +68,7 @@ export default function Nav({ onOpenPalette }) {
 
           <button
             className={`nav-burger${menuOpen ? ' open' : ''}`}
-            onClick={() => setMenuOpen(o => !o)}
+            onClick={() => { vibrate(); setMenuOpen(o => !o); }}
             aria-expanded={menuOpen}
             aria-label={menuOpen ? 'Close menu' : 'Open menu'}
           >
@@ -76,11 +77,25 @@ export default function Nav({ onOpenPalette }) {
         </div>
       </div>
 
+      {/* Overlay */}
+      <div className={`nav-overlay${menuOpen ? ' open' : ''}`} onClick={() => setMenuOpen(false)} aria-hidden="true" />
+
       <div className={`nav-sheet${menuOpen ? ' open' : ''}`} aria-hidden={!menuOpen}>
+        {/* Close button */}
+        <button
+          className="nav-close"
+          onClick={() => { vibrate(); setMenuOpen(false); }}
+          aria-label="Close menu"
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" width="20" height="20">
+            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+
         <ul>
           {SECTIONS.map((s, i) => (
             <li key={s.a} style={{ transitionDelay: `${i * 40}ms` }}>
-              <a href={s.a} onClick={() => setMenuOpen(false)}>{s.l}</a>
+              <a href={s.a} onClick={() => { vibrate(); setMenuOpen(false); }}>{s.l}</a>
             </li>
           ))}
         </ul>

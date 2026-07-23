@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
+import { vibrate } from '../utils/vibrate';
 import SpecSection from './SpecSection';
 import ContributionGraph from './ContributionGraph';
 import { fetchRepos, fetchCommit, fetchRepoActivity, formatSize, activeSince } from '../utils/github';
@@ -18,22 +19,7 @@ function langColor(lang) {
   return LANG_COLORS[lang] || '#666';
 }
 
-const FEATURED_PROJECT = {
-  name: 'Synapse',
-  tagline: 'Collaborative learning platform with AI-powered quizzes',
-  problem:
-    'Students and teams studying together need a way to turn study materials into active recall practice. Existing flashcard apps are static \u2014 they don\u2019t generate questions from your notes or adapt to what you\u2019re getting wrong.',
-  decisions: [
-    'Authentication + room system via Supabase so each study group gets a private space with owner and admin roles.',
-    'Upload any document (PDF, DOCX, pasted text) and run it through OpenAI to generate multiple-choice and true/false questions at configurable difficulty.',
-    'Built-in SM-2 spaced repetition algorithm that automatically identifies weak questions and schedules reviews \u2014 no manual curation needed.',
-  ],
-  result:
-    'A live learning platform where users upload materials, get AI-generated quizzes, compete on leaderboards, and reinforce weak areas through spaced repetition. Deployed with offline support, push notifications, and full authentication.',
-  tech: ['TypeScript', 'React', 'Supabase', 'OpenAI', 'Vite'],
-  live: 'https://synapse-khaki.vercel.app',
-  repo: 'https://github.com/frontenddevmichael/synapse',
-};
+const INITIAL_SHOW = 6;
 
 const STATIC_PROJECTS = [
   {
@@ -68,6 +54,7 @@ export default function Work() {
   const [reposError, setReposError] = useState(false);
   const [activeTag, setActiveTag] = useState('All');
   const [selectedProject, setSelectedProject] = useState(null);
+  const [showCount, setShowCount] = useState(INITIAL_SHOW);
   const [commits, setCommits] = useState({});
   const [activity, setActivity] = useState({});
   const gridRef = useRef(null);
@@ -123,30 +110,15 @@ export default function Work() {
     return () => { cancelled = true; };
   }, [repos]);
 
-  const featured = useMemo(() => {
-    if (!repos || repos.length === 0) return FEATURED_PROJECT;
-    const synapse = repos.find(r => r.name.toLowerCase() === 'synapse');
-    if (!synapse) return FEATURED_PROJECT;
-
-    const tech = synapse.topics && synapse.topics.length >= 3
-      ? synapse.topics.slice(0, 5)
-      : synapse.lang
-        ? [synapse.lang, ...(synapse.topics || [])].slice(0, 5)
-        : FEATURED_PROJECT.tech;
-
-    return {
-      ...FEATURED_PROJECT,
-      tagline: synapse.desc || FEATURED_PROJECT.tagline,
-      tech,
-      live: synapse.live || FEATURED_PROJECT.live,
-      repo: synapse.url || FEATURED_PROJECT.repo,
-    };
-  }, [repos]);
-
   const hasRepos = repos !== null;
   const gridItems = useMemo(() => {
     if (hasRepos && repos.length > 0) {
-      return repos.slice(0, 12).map(r => ({
+      const sorted = [...repos].sort((a, b) => {
+        if (!a.pushedAt) return 1;
+        if (!b.pushedAt) return -1;
+        return new Date(b.pushedAt) - new Date(a.pushedAt);
+      });
+      return sorted.map(r => ({
         key: r.name,
         name: r.name,
         title: r.name.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
@@ -189,6 +161,9 @@ export default function Work() {
     }));
   }, [hasRepos, repos]);
 
+  const displayItems = useMemo(() => gridItems.slice(0, showCount), [gridItems, showCount]);
+  const hasMore = gridItems.length > showCount;
+
   // Scroll-triggered IntersectionObserver for card entrance animations
   // Must be placed AFTER gridItems declaration to avoid TDZ error
   useEffect(() => {
@@ -205,7 +180,7 @@ export default function Work() {
     }, { threshold: 0.05, rootMargin: '0px 0px -40px 0px' });
     cards.forEach(el => obs.observe(el));
     return () => obs.disconnect();
-  }, [gridItems.length]);
+  }, [displayItems.length]);
 
   // Mouse tracking glow on grid
   const handleGridMouse = useCallback((e) => {
@@ -240,50 +215,6 @@ export default function Work() {
     <SpecSection id="work" num="02" title="Work">
       <ContributionGraph />
 
-      {/* Featured Project */}
-      <div className="featured-proj stagger-up" style={{ marginTop: 'var(--space-2xl)', '--lang-color': '#61dafb' }}>
-        <div className="featured-proj-head">
-          <span className="tag tag--featured">
-            <span className="tag-dot"></span>
-            Featured
-          </span>
-          <h3>{featured.name}</h3>
-          <p className="featured-tagline">{featured.tagline}</p>
-        </div>
-        <div className="featured-proj-body">
-          <div className="fp-block">
-            <span className="fp-label">Problem</span>
-            <p>{featured.problem}</p>
-          </div>
-          <div className="fp-block">
-            <span className="fp-label">Decisions</span>
-            <ul>
-              {featured.decisions.map((d, i) => <li key={i}>{d}</li>)}
-            </ul>
-          </div>
-          <div className="fp-block">
-            <span className="fp-label">Result</span>
-            <p>{featured.result}</p>
-          </div>
-        </div>
-        <div className="featured-proj-foot">
-          <div className="proj-specs">
-            {featured.tech.map(t => <span key={t} className="s">{t}</span>)}
-          </div>
-          <div className="fp-links">
-            {featured.live && (
-              <a href={featured.live} target="_blank" rel="noopener noreferrer" className="btn btn--ghost">Live site</a>
-            )}
-            {featured.repo && (
-              <a href={featured.repo} target="_blank" rel="noopener noreferrer" className="btn btn--ghost">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" style={{width:14,height:14}}><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg>
-                Code
-              </a>
-            )}
-          </div>
-        </div>
-      </div>
-
       {reposError && (
         <div className="api-notice stagger-up">
           <span className="api-notice-icon">!</span>
@@ -294,14 +225,14 @@ export default function Work() {
 
       {/* Tag filters */}
       {tags.length > 2 && (
-        <div className="proj-filters scroll-fade" role="tablist" aria-label="Filter projects by tag">
+        <div className="proj-filters" role="tablist" aria-label="Filter projects by tag">
           {tags.map(t => (
             <button
               key={t}
               role="tab"
               aria-selected={activeTag === t}
               className={`proj-filter${activeTag === t ? ' active' : ''}`}
-              onClick={() => setActiveTag(t)}
+              onClick={() => { vibrate(); setActiveTag(t); }}
             >
               {t}
             </button>
@@ -309,21 +240,21 @@ export default function Work() {
         </div>
       )}
 
-      {/* Bento grid with mouse tracking glow */}
+      {/* Project grid */}
       <div
         className="proj-grid proj-grid--bento proj-grid--track"
         style={{ marginTop: 'var(--space-xl)' }}
         ref={gridRef}
         onMouseMove={handleGridMouse}
       >
-        {filtered.length === 0 ? (
+        {displayItems.length === 0 ? (
           <div className="proj proj-card">
             <div className="head"><span className="tag">note</span></div>
             <h3>No projects match this filter</h3>
             <p>Try a different tag.</p>
           </div>
         ) : (
-          filtered.map((it, i) => {
+          displayItems.map((it, i) => {
             const hostname = it.live ? safeHostname(it.live) : null;
             const langColorVal = langColor(it.lang);
             const c = commits[it.name];
@@ -439,8 +370,8 @@ export default function Work() {
                 role="button"
                 tabIndex={0}
                 aria-label={`View details for ${it.title || it.name}`}
-                onClick={() => openDetail({ ...it, hostname, commit: c, weeks })}
-                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openDetail({ ...it, hostname, commit: c, weeks }); } }}
+                onClick={() => { vibrate(4); openDetail({ ...it, hostname, commit: c, weeks }); }}
+                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); vibrate(4); openDetail({ ...it, hostname, commit: c, weeks }); } }}
                 onMouseMove={(e) => {
                   const rect = e.currentTarget.getBoundingClientRect();
                   const x = ((e.clientX - rect.left) / rect.width) * 100;
@@ -455,6 +386,18 @@ export default function Work() {
           })
         )}
       </div>
+
+      {/* See more */}
+      {hasMore && (
+        <div style={{ textAlign: 'center', marginTop: 'var(--space-lg)' }}>
+          <button
+            className="btn"
+            onClick={() => { vibrate(); setShowCount(p => p + INITIAL_SHOW); }}
+          >
+            <span>See more</span>
+          </button>
+        </div>
+      )}
 
       {/* Project Detail Modal */}
       {selectedProject && (

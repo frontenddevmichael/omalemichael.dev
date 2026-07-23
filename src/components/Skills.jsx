@@ -22,12 +22,18 @@ export default function Skills() {
   const ly = useRef(0);
   const lt = useRef(0);
   const ci = useRef(-1);
+  const si = useRef(-1);
 
   useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    let isVisible = true;
+    const visObs = new IntersectionObserver(([entry]) => { isVisible = entry.isIntersecting; }, { threshold: 0 });
+    visObs.observe(el);
+
     lt.current = performance.now();
     const loop = now => {
-      const el = ref.current;
-      if (!el) { rf.current = requestAnimationFrame(loop); return; }
+      if (!isVisible) { rf.current = requestAnimationFrame(loop); return; }
       const ch = el.clientHeight || 480;
       const dt = Math.min((now - lt.current) / 1000, 0.05);
       lt.current = now;
@@ -78,7 +84,48 @@ export default function Skills() {
       rf.current = requestAnimationFrame(loop);
     };
     rf.current = requestAnimationFrame(loop);
-    return () => { if (rf.current) cancelAnimationFrame(rf.current); };
+    return () => {
+      visObs.disconnect();
+      if (rf.current) cancelAnimationFrame(rf.current);
+    };
+  }, []);
+
+  /* Page-scroll driven advancement: snap carousel to the skill
+     that aligns with the user's scroll position through the section. */
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    let prevScrollIdx = -1;
+    let tick = 0;
+
+    const onScroll = () => {
+      const section = el.closest('section');
+      if (!section) return;
+      const rect = section.getBoundingClientRect();
+      const vh = window.innerHeight;
+      if (rect.bottom < 0 || rect.top > vh) return;
+      const progress = Math.max(0, Math.min(1, (vh / 2 - rect.top) / rect.height));
+      const scrollIdx = Math.min(SKILLS.length - 1, Math.max(0, Math.floor(progress * SKILLS.length)));
+
+      if (scrollIdx !== prevScrollIdx) {
+        prevScrollIdx = scrollIdx;
+        if (scrollIdx >= 0) {
+          si.current = scrollIdx;
+          const ch = el.clientHeight || 480;
+          const target = ch / 2 - scrollIdx * IH;
+          const prevPy = py.current;
+          py.current = null;
+          sy.current = ((target % TH) + TH) % TH;
+          vel.current = 0;
+          if ('vibrate' in navigator) {
+            try { navigator.vibrate(8); } catch (_) {}
+          }
+        }
+      }
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
   const onDown = useCallback(e => {

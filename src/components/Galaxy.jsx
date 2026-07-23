@@ -24,11 +24,12 @@ function hslToRgb(h, s, l) {
   return [r + m, g + m, b + m];
 }
 
-function generateGalaxyData() {
-  const positions = new Float32Array(PARTICLE_COUNT * 3);
-  const colors = new Float32Array(PARTICLE_COUNT * 3);
+function generateGalaxyData(count) {
+  const n = count || PARTICLE_COUNT;
+  const positions = new Float32Array(n * 3);
+  const colors = new Float32Array(n * 3);
 
-  for (let i = 0; i < PARTICLE_COUNT; i++) {
+  for (let i = 0; i < n; i++) {
     const arm = Math.floor(Math.random() * ARMS);
     const armAngleOffset = (arm / ARMS) * Math.PI * 2;
     const radius = Math.random() ** 1.2 * RADIUS;
@@ -64,13 +65,17 @@ export default function Galaxy({ containerRef }) {
     const container = containerRef.current;
     if (!container) return;
 
-    const { positions, colors } = generateGalaxyData();
+    const isMobile = window.innerWidth < 600;
+    const particleCount = isMobile ? 2000 : 8000;
+    const { positions, colors } = generateGalaxyData(particleCount);
+
+    const matSize = isMobile ? 0.02 : 0.035;
     const geo = new BufferGeometry();
     geo.setAttribute('position', new BufferAttribute(positions, 3));
     geo.setAttribute('color', new BufferAttribute(colors, 3));
 
     const mat = new PointsMaterial({
-      size: 0.035,
+      size: matSize,
       vertexColors: true,
       transparent: true,
       opacity: 0.9,
@@ -92,7 +97,7 @@ export default function Galaxy({ containerRef }) {
       alpha: true,
       antialias: true,
     });
-    renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+    renderer.setPixelRatio(isMobile ? Math.min(devicePixelRatio, 1) : Math.min(devicePixelRatio, 2));
     renderer.setSize(container.clientWidth, container.clientHeight);
     renderer.setClearColor(0x000000, 0);
     renderer.domElement.style.position = 'absolute';

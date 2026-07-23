@@ -37,18 +37,18 @@ const SIZE = 256;
 
 function getCorners(isMobile) {
   if (isMobile) return [
-    { x: -1.1, y: 2.0, z: -1, s: 0.45 },
-    { x: 1.1, y: 2.0, z: -0.5, s: 0.45 },
-    { x: 0, y: -2.2, z: 0, s: 0.4 },
-    { x: -1.2, y: -1.2, z: -1.5, s: 0.45 },
-    { x: 1.2, y: -1.2, z: -1, s: 0.45 },
+    { x: -1.4, y: 2.4, z: -1, s: 0.4 },
+    { x: 1.4, y: 2.4, z: -0.5, s: 0.4 },
+    { x: -1.2, y: -2.4, z: 0, s: 0.38 },
+    { x: 1.2, y: -2.4, z: -1.5, s: 0.38 },
+    { x: 0, y: -3.0, z: -1, s: 0.35 },
   ];
   return [
-    { x: -3, y: 2, z: -1, s: 0.7 },
-    { x: 3.2, y: 2.2, z: -0.5, s: 0.75 },
-    { x: 0, y: -2.8, z: 0, s: 0.65 },
-    { x: -3.2, y: -1.8, z: -1.5, s: 0.7 },
-    { x: 3.5, y: -2, z: -1, s: 0.7 },
+    { x: -3.2, y: 2.5, z: -1, s: 0.65 },
+    { x: 3.2, y: 2.5, z: -0.5, s: 0.65 },
+    { x: -2.8, y: -3.0, z: 0, s: 0.6 },
+    { x: 2.8, y: -3.0, z: -1.5, s: 0.6 },
+    { x: 0, y: -3.8, z: -1, s: 0.55 },
   ];
 }
 
@@ -60,8 +60,8 @@ export default function HeroScene({ containerRef }) {
     const isMobile = window.innerWidth < 600;
     const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
     const CORNERS = getCorners(isMobile);
-    const POUR_COUNT = isMobile ? 80 : 500;
-    const dustCount = isMobile ? 20 : 60;
+    const POUR_COUNT = isMobile ? 30 : 500;
+    const dustCount = isMobile ? 10 : 60;
 
     const scene = new Scene();
     const aspect = container.clientHeight > 0 ? container.clientWidth / container.clientHeight : 1;
@@ -69,7 +69,7 @@ export default function HeroScene({ containerRef }) {
     camera.position.set(0, 0, 8);
 
     const renderer = new WebGLRenderer({ alpha: true, antialias: true });
-    renderer.setPixelRatio(isMobile ? Math.min(devicePixelRatio, 1) : Math.min(devicePixelRatio, 2));
+    renderer.setPixelRatio(isMobile ? 1 : Math.min(devicePixelRatio, 2));
     renderer.setSize(container.clientWidth, container.clientHeight);
     renderer.setClearColor(0x000000, 0);
     renderer.domElement.style.position = 'absolute';
@@ -179,9 +179,9 @@ export default function HeroScene({ containerRef }) {
       const fadeStart = 0.6;
       const scrollFade = scrollProgress < fadeStart ? 1 : Math.max(0, 1 - (scrollProgress - fadeStart) / 0.4);
 
-      const parallaxLogo = (scrollProgress - 0.3) * 0.6;
-      const parallaxGrid = (scrollProgress - 0.3) * 0.8;
-      const parallaxDust = (scrollProgress - 0.3) * 0.15;
+      const parallaxLogo = isMobile ? 0 : (scrollProgress - 0.3) * 0.6;
+      const parallaxGrid = isMobile ? (scrollProgress - 0.3) * 0.4 : (scrollProgress - 0.3) * 0.8;
+      const parallaxDust = isMobile ? 0 : (scrollProgress - 0.3) * 0.15;
 
       const vFov = camera.fov * Math.PI / 180;
       const vHeight = 2 * Math.tan(vFov / 2) * camera.position.z;

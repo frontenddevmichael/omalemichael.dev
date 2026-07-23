@@ -166,6 +166,16 @@
 
 @media (max-width:400px) {
   .hero { padding:4.5rem var(--space-sm) 2.5rem; min-height:90dvh; }
+  .hero .sub { font-size:0.8125rem; }
+}
+
+@media (max-width:360px) {
+  .hero { padding:3.5rem 6px 2rem; min-height:88dvh; }
+  .hero h1 { font-size:1.75rem; margin-bottom:var(--space-lg); }
+  .hero .sub { font-size:0.8125rem; }
+  .hero-actions { gap:var(--space-sm); }
+  .hero-actions .btn { padding:10px 20px; font-size:0.8125rem; min-height:40px; }
+  .status { font-size:8px; gap:5px; }
 }
 
 @media (min-width:601px) and (max-width:899px) {
