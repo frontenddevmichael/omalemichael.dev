@@ -264,22 +264,24 @@
 }
 
 @media (max-width: 600px) {
-  .process-num { font-size: var(--fs-h2); width: 1.5ch; }
-  .process-step { gap: var(--space-md); padding: var(--space-md) 0; }
-  .process-connector { left: 1.5ch; }
+  .process-num { font-size: var(--fs-body); width: 2ch; }
+  .process-step { gap: var(--space-lg); padding: var(--space-lg) 0; }
+  .process-connector { left: 2ch; }
   .process-body h3 { font-size: var(--fs-body); }
-  .process-body p { font-size: 0.625rem; }
+  .process-body p { font-size: 0.75rem; }
 }
 @media (max-width: 400px) {
-  .process-step { gap: var(--space-sm); padding: var(--space-sm) 0; }
-  .process-body p { font-size: 0.5625rem; }
+  .process-num { font-size: 0.8125rem; width: 1.5ch; }
+  .process-step { gap: var(--space-md); padding: var(--space-md) 0; }
+  .process-body h3 { font-size: 0.8125rem; }
+  .process-body p { font-size: 0.6875rem; }
 }
 @media (max-width: 360px) {
-  .process-num { font-size: var(--fs-body); width: 1.2ch; }
-  .process-step { gap: 6px; padding: 6px 0; }
-  .process-connector { left: 1.2ch; }
-  .process-body h3 { font-size: 0.8125rem; }
-  .process-body p { font-size: 0.5rem; }
+  .process-num { font-size: 0.75rem; width: 1.5ch; }
+  .process-step { gap: 10px; padding: 10px 0; }
+  .process-connector { left: 1.5ch; }
+  .process-body h3 { font-size: 0.75rem; }
+  .process-body p { font-size: 0.625rem; }
 }
 
 .process-body h3 { font-size: var(--fs-h3); font-weight: 550; color: var(--text-soft); margin-bottom: 6px; position:relative; z-index:1; }
@@ -431,10 +433,18 @@
 }
 @media (max-width: 360px) {
   .nav-sheet { padding: var(--space-md) var(--space-md); }
+  .nav-sheet { padding: var(--space-md) var(--space-lg); }
   .nav-sheet a { font-size: 1rem; padding: var(--space-xs) var(--space-sm); }
   .nav-sheet ul { gap: 2px; }
-  .nav-sheet-cmd { font-size: 0.625rem; padding: 8px 12px; margin-top: var(--space-md); }
+  .nav-sheet-cmd { font-size: 0.625rem; padding: 8px 12px; margin-top: var(--space-sm); }
   .nav-close { top: 4px; right: 4px; width: 38px; height: 38px; }
+}
+@media (max-width: 400px) {
+  .nav-sheet { padding: var(--space-sm) var(--space-md); max-height: 90dvh; }
+  .nav-sheet a { font-size: 0.9375rem; padding: 6px 10px; }
+  .nav-sheet ul { gap: 1px; }
+  .nav-sheet-cmd { font-size: 0.5625rem; padding: 6px 10px; }
+  .nav-close { top: 2px; right: 2px; width: 34px; height: 34px; }
 }
 
 /* --- Reduced motion: also cover new elements --- */

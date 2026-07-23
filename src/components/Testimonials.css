@@ -87,23 +87,25 @@
   .ts-card { scroll-snap-align: center; }
 }
 @media (max-width: 900px) {
-  .ts-card { flex: 0 0 55%; min-height: 180px; padding: var(--space-md) var(--space-lg); }
+  .ts-card { flex: 0 0 55%; min-height: 190px; padding: var(--space-md) var(--space-lg); }
   .ts-outer { mask-image: linear-gradient(to right, transparent 0%, #000 3%, #000 97%, transparent 100%);
   -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 3%, #000 97%, transparent 100%); }
 }
 @media (max-width: 600px) {
-  .ts-card { flex: 0 0 80%; padding: var(--space-sm) var(--space-md); min-height: 160px; }
+  .ts-card { flex: 0 0 78%; padding: var(--space-md) var(--space-lg); min-height: 180px; }
   .ts-quote { font-size: 13px; }
   .ts-outer { mask-image: linear-gradient(to right, transparent 0%, #000 2%, #000 98%, transparent 100%);
   -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 2%, #000 98%, transparent 100%); }
 }
 @media (max-width: 400px) {
-  .ts-card { flex: 0 0 88%; min-height: 140px; padding: var(--space-sm); }
-  .ts-quote { font-size: 12px; }
+  .ts-card { flex: 0 0 85%; min-height: 170px; padding: var(--space-md); }
+  .ts-quote { font-size: 13px; }
+  .ts-name { font-size: 11px; }
+  .ts-role { font-size: 10px; }
 }
 @media (max-width: 360px) {
-  .ts-card { flex: 0 0 94%; min-height: 120px; padding: 6px; }
-  .ts-quote { font-size: 11px; }
-  .ts-name { font-size: 9px; }
+  .ts-card { flex: 0 0 90%; min-height: 160px; padding: var(--space-sm) var(--space-md); }
+  .ts-quote { font-size: 12px; }
+  .ts-name { font-size: 10px; }
   .ts-role { font-size: 9px; }
 }
