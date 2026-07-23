@@ -1202,6 +1202,55 @@ section[id] { scroll-margin-top:4rem; }
   animation:blip 3s var(--ease) infinite;
 }
 
+/* --- mobile contact carousel --- */
+.contact-carousel { display:none; }
+
+@media (max-width: 768px) {
+  .contact-stack { display:none; }
+  .contact-carousel { display:block; }
+
+  .cc-track {
+    display:flex; gap:16px;
+    overflow-x:auto; scroll-snap-type:x mandatory;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+    padding:0 0 16px;
+  }
+  .cc-track::-webkit-scrollbar { display:none; }
+
+  .cc-card {
+    scroll-snap-align:center;
+    flex:0 0 70vw;
+    max-width:280px;
+    display:flex; flex-direction:column; align-items:center; gap:8px;
+    padding:var(--space-xl) var(--space-lg);
+    border:1px solid var(--border);
+    border-radius:var(--radius-lg);
+    background:var(--surface);
+    color:var(--text-muted);
+    text-decoration:none;
+    -webkit-tap-highlight-color:transparent;
+    transition:background var(--fast), border-color var(--fast), color var(--fast);
+  }
+  .cc-card:active { background:var(--surface-2); border-color:var(--border-light); color:var(--text); }
+
+  .cc-ci svg { width:32px; height:32px; color:var(--text-dim); }
+  .cc-cl { font-size:var(--fs-body); font-weight:480; color:var(--text-soft); }
+  .cc-ch { font-family:var(--font-mono); font-size:var(--fs-small); color:var(--text-dim); }
+  .cc-ca { margin-top:4px; color:var(--text-dim); }
+
+  .cc-dots {
+    display:flex; justify-content:center; gap:8px;
+    padding:8px 0 0;
+  }
+  .cc-dot {
+    width:6px; height:6px; border-radius:50%;
+    background:var(--text-muted); opacity:0.3;
+    transition:opacity var(--fast);
+  }
+  .cc-dot--on { opacity:0.8; }
+}
+
 /* --- support / buy me coffee --- */
 .support-inner {
   display:grid;

@@ -1,4 +1,4 @@
-import { useRef, useEffect, useCallback } from 'react';
+import { useRef, useEffect, useCallback, useState } from 'react';
 import { LINKS } from '../data/links';
 
 const CARDS = [
@@ -19,6 +19,8 @@ export default function Contact() {
   const sectionRef = useRef(null);
   const cardsRef = useRef([]);
   const offsetsRef = useRef(null);
+  const carouselRef = useRef(null);
+  const [activeDot, setActiveDot] = useState(0);
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -82,6 +84,17 @@ export default function Contact() {
     return () => { obs.disconnect(); window.removeEventListener('scroll', onScroll); window.removeEventListener('resize', calc); if (raf) cancelAnimationFrame(raf); };
   }, []);
 
+  useEffect(() => {
+    const el = carouselRef.current;
+    if (!el) return;
+    const onScroll = () => {
+      const idx = Math.round(el.scrollLeft / (el.clientWidth * 0.8));
+      setActiveDot(Math.min(idx, CARDS.length - 1));
+    };
+    el.addEventListener('scroll', onScroll, { passive: true });
+    return () => el.removeEventListener('scroll', onScroll);
+  }, []);
+
   const setCardRef = useCallback((el, i) => { cardsRef.current[i] = el; }, []);
 
   return (
@@ -98,6 +111,8 @@ export default function Contact() {
               <span className="dot"></span>
               <span>Available for contract &middot; UTC+1</span>
             </div>
+
+            {/* Desktop: scroll-driven overlap */}
             <div className="contact-stack">
               {CARDS.map((c, i) => (
                 <a key={c.label} href={c.url} className="clink-card stagger-up"
@@ -112,6 +127,27 @@ export default function Contact() {
                   <span className="cc-arrow"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"><line x1="3" y1="8" x2="13" y2="8"/><polyline points="9 4 13 8 9 12"/></svg></span>
                 </a>
               ))}
+            </div>
+
+            {/* Mobile: horizontal snap carousel */}
+            <div className="contact-carousel">
+              <div className="cc-track" ref={carouselRef}>
+                {CARDS.map((c, i) => (
+                  <a key={c.label} href={c.url} className="cc-card"
+                    target={c.target} rel={c.rel}
+                    aria-label={`${c.label}${c.target ? ' — opens in new tab' : ''}`}>
+                    <span className="cc-ci" dangerouslySetInnerHTML={{__html: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round">${paths[c.icon]}</svg>`}} />
+                    <span className="cc-cl">{c.label}</span>
+                    <span className="cc-ch">{c.handle}</span>
+                    <span className="cc-ca"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"><line x1="3" y1="8" x2="13" y2="8"/><polyline points="9 4 13 8 9 12"/></svg></span>
+                  </a>
+                ))}
+              </div>
+              <div className="cc-dots">
+                {CARDS.map((_, i) => (
+                  <span key={i} className={`cc-dot${i === activeDot ? ' cc-dot--on' : ''}`} />
+                ))}
+              </div>
             </div>
           </div>
         </div>
