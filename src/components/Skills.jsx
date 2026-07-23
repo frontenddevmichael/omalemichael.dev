@@ -31,6 +31,9 @@ export default function Skills() {
 
     const onWheel = e => { e.preventDefault(); };
     el.addEventListener('wheel', onWheel, { passive: false });
+    const noop = e => e.preventDefault();
+    el.addEventListener('touchstart', noop, { passive: false });
+    el.addEventListener('touchmove', noop, { passive: false });
 
     lt.current = performance.now();
     const loop = now => {
@@ -76,6 +79,8 @@ export default function Skills() {
     return () => {
       visObs.disconnect();
       el.removeEventListener('wheel', onWheel);
+      el.removeEventListener('touchstart', noop);
+      el.removeEventListener('touchmove', noop);
       if (rf.current) cancelAnimationFrame(rf.current);
     };
   }, []);
