@@ -18,6 +18,16 @@ import ScrollProgress from './components/ScrollProgress';
 
 function App() {
   const [palOpen, setPalOpen] = useState(false);
+  const [pageLoaded, setPageLoaded] = useState(false);
+
+  /* Start entrance animations before the loading screen fully fades
+     (loading screen has min 1200ms wait + 400ms fade) — by starting at
+     1000ms, the nav and first hero elements begin arriving behind the
+     loader and are already in place when it goes away. */
+  useEffect(() => {
+    const t = setTimeout(() => setPageLoaded(true), 1000);
+    return () => clearTimeout(t);
+  }, []);
 
   useEffect(() => {
     const handler = (e) => {
@@ -62,9 +72,9 @@ function App() {
       <a href="#main-content" className="skip-link">Skip to content</a>
       <LoadingScreen />
       <ScrollProgress />
-      <Nav onOpenPalette={() => setPalOpen(true)} />
+      <Nav onOpenPalette={() => setPalOpen(true)} pageLoaded={pageLoaded} />
       <main id="main-content">
-        <Hero />
+        <Hero pageLoaded={pageLoaded} />
         <div className="gap-sec stagger-up">
           <span className="num">01</span>
           <span className="l">About</span>

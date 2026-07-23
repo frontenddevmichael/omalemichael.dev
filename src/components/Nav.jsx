@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { vibrate } from '../utils/vibrate';
 
 const SECTIONS = [
@@ -12,23 +12,25 @@ const SECTIONS = [
   { l: 'Contact', a: '#contact' },
 ];
 
-export default function Nav({ onOpenPalette }) {
+const scrollPos = { current: 0 };
+
+export default function Nav({ onOpenPalette, pageLoaded }) {
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     if (menuOpen) {
+      scrollPos.current = window.scrollY;
       document.body.style.overflow = 'hidden';
-      document.body.style.position = 'fixed';
-      document.body.style.width = '100%';
+      if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
+        document.documentElement.style.overflow = 'hidden';
+      }
     } else {
       document.body.style.overflow = '';
-      document.body.style.position = '';
-      document.body.style.width = '';
+      document.documentElement.style.overflow = '';
     }
     return () => {
       document.body.style.overflow = '';
-      document.body.style.position = '';
-      document.body.style.width = '';
+      document.documentElement.style.overflow = '';
     };
   }, [menuOpen]);
 
@@ -51,8 +53,8 @@ export default function Nav({ onOpenPalette }) {
     return () => window.removeEventListener('keydown', handler);
   }, [menuOpen]);
 
-  return (
-    <nav className="top">
+  return (<>
+    <nav className={`top${pageLoaded ? ' top--loaded' : ''}`}>
       <div className="top-inner">
         <span className="logo">
           <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.3" aria-hidden="true">
@@ -62,7 +64,7 @@ export default function Nav({ onOpenPalette }) {
           michael/spec
         </span>
 
-        <a href="#contact" className="avail-badge" aria-label="Available for work, Lagos Nigeria, UTC+1. Go to contact section.">
+        <a href="#contact" className="avail-badge" onClick={() => { vibrate(); document.body.style.overflow = ''; document.documentElement.style.overflow = ''; }} aria-label="Available for work, Lagos Nigeria, UTC+1. Go to contact section.">
           <span className="dot"></span>
           <span className="avail-text">Open to work</span>
           <span className="avail-sep">&middot;</span>
@@ -88,36 +90,35 @@ export default function Nav({ onOpenPalette }) {
           </button>
         </div>
       </div>
-
-      {/* Overlay */}
-      <div className={`nav-overlay${menuOpen ? ' open' : ''}`} onClick={() => setMenuOpen(false)} aria-hidden="true" />
-
-      <div className={`nav-sheet${menuOpen ? ' open' : ''}`} aria-hidden={!menuOpen}>
-        {/* Close button */}
-        <button
-          className="nav-close"
-          onClick={() => { vibrate(); setMenuOpen(false); }}
-          aria-label="Close menu"
-        >
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" width="20" height="20">
-            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-          </svg>
-        </button>
-
-        <ul>
-          {SECTIONS.map((s, i) => (
-            <li key={s.a} style={{ transitionDelay: `${i * 40}ms` }}>
-              <a href={s.a} onClick={() => { vibrate(); setMenuOpen(false); }}>{s.l}</a>
-            </li>
-          ))}
-        </ul>
-        <button
-          className="nav-sheet-cmd"
-          onClick={() => { setMenuOpen(false); onOpenPalette(); }}
-        >
-          Open command palette
-        </button>
-      </div>
     </nav>
-  );
+
+    {/* Overlay + nav-sheet outside <nav> to avoid transform creating a containing block that breaks position:fixed */}
+    <div className={`nav-overlay${menuOpen ? ' open' : ''}`} onClick={() => setMenuOpen(false)} aria-hidden="true" />
+
+    <div className={`nav-sheet${menuOpen ? ' open' : ''}`} aria-hidden={!menuOpen}>
+      <button
+        className="nav-close"
+        onClick={() => { vibrate(); setMenuOpen(false); }}
+        aria-label="Close menu"
+      >
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" width="20" height="20">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+
+      <ul>
+        {SECTIONS.map((s, i) => (
+          <li key={s.a} style={{ transitionDelay: `${i * 40}ms` }}>
+              <a href={s.a} onClick={() => { vibrate(); document.body.style.overflow = ''; document.documentElement.style.overflow = ''; setMenuOpen(false); }}>{s.l}</a>
+          </li>
+        ))}
+      </ul>
+      <button
+        className="nav-sheet-cmd"
+        onClick={() => { setMenuOpen(false); onOpenPalette(); }}
+      >
+        Open command palette
+      </button>
+    </div>
+  </>);
 }

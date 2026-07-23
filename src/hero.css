@@ -8,6 +8,35 @@
   overflow:hidden;
 }
 
+/* Cockpit windshield vignette — dark edges framing the pilot view */
+.hero::before {
+  content:'';
+  position:absolute;
+  inset:0;
+  z-index:0;
+  pointer-events:none;
+  background:
+    radial-gradient(ellipse 65% 55% at 50% 50%, transparent 30%, rgba(0,0,0,0.7) 100%),
+    radial-gradient(ellipse 85% 75% at 50% 50%, transparent 45%, rgba(0,0,0,0.4) 100%);
+  opacity:0;
+  transition:opacity 600ms ease 200ms;
+}
+.hero--loaded::before { opacity:1; }
+
+/* Cockpit frame — subtle top border */
+.hero::after {
+  content:'';
+  position:absolute;
+  top:0;
+  left:6%;
+  right:6%;
+  height:1px;
+  background:linear-gradient(90deg, transparent, var(--border-light) 15%, var(--text-dim) 50%, var(--border-light) 85%, transparent);
+  z-index:0;
+  opacity:0.5;
+  pointer-events:none;
+}
+
 .hero-content {
   width:100%;
   max-width:800px;
@@ -16,6 +45,8 @@
   flex-direction:column;
   align-items:center;
   text-align:center;
+  position:relative;
+  z-index:1;
 }
 
 /* status indicator */
@@ -29,6 +60,11 @@
   text-transform:uppercase;
   letter-spacing:.06em;
   margin-bottom:var(--space-xl);
+  padding:6px 16px;
+  border:1px solid var(--border-light);
+  border-radius:999px;
+  background:rgba(255,255,255,0.03);
+  backdrop-filter:blur(4px);
 }
 
 .dot {
@@ -44,61 +80,44 @@
   50% { opacity:1; }
 }
 
-/* stagger reveal */
-@keyframes reveal-up {
-  from { opacity:0; transform:translateY(16px); }
-  to { opacity:1; transform:none; }
+/* --- Stagger entrance keyframes --- */
+@keyframes hero-rise {
+  0%   { opacity:0; transform:translateY(30px) scale(0.96); filter:blur(10px); }
+  100% { opacity:1; transform:translateY(0) scale(1); filter:blur(0); }
+}
+@keyframes hero-slide {
+  0%   { opacity:0; transform:translateX(-24px); filter:blur(6px); }
+  100% { opacity:1; transform:translateX(0); filter:blur(0); }
 }
 
-.stagger-reveal {
-  opacity:0;
-  animation:reveal-up 700ms var(--ease) forwards;
+/* Hidden by default — loading screen covers everything */
+.stagger-reveal, .scroll-hint { opacity:0; }
+.hero h1 .hl { display:block; opacity:0; }
+
+/* After loading screen is gone — run entrance */
+.hero--loaded .stagger-reveal,
+.hero--loaded .scroll-hint {
+  animation:hero-rise 600ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.hero--loaded .status.stagger-reveal {
+  animation:hero-slide 500ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.hero--loaded .hero h1 .hl {
+  animation:hero-rise 600ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-.hero h1 {
-  font-size:var(--fs-hero);
-  font-weight:620;
-  line-height:var(--lh-tight);
-  letter-spacing:-.03em;
-  margin-bottom:var(--space-xl);
-  max-width:100%;
-  text-align:center;
-}
-
-.hero h1 span {
-  display:block;
-}
-
-.hero h1 span:nth-child(2) {
+.hero h1 .hl--dim {
   color:var(--text-muted);
   font-weight:450;
 }
 
-.hero .sub {
-  font-size:var(--fs-body);
-  color:var(--text-muted);
-  max-width:70ch;
-  margin-bottom:var(--space-2xl);
-  line-height:1.7;
-  text-align:center;
-}
-
-.hero-actions {
-  display:flex;
-  align-items:center;
-  gap:var(--space-lg);
-  justify-content:center;
-}
-
-/* scroll-down drip indicator */
+/* Scroll hint */
 .scroll-hint {
   position:absolute;
   bottom:2rem;
   left:50%;
   transform:translateX(-50%);
   z-index:2;
-  opacity:0;
-  animation:reveal-up 700ms var(--ease) 700ms forwards;
 }
 
 .sc-track {
@@ -129,6 +148,32 @@
   100% { top:36px; opacity:0; }
 }
 
+.hero h1 {
+  font-size:var(--fs-hero);
+  font-weight:620;
+  line-height:var(--lh-tight);
+  letter-spacing:-.03em;
+  margin-bottom:var(--space-xl);
+  max-width:100%;
+  text-align:center;
+}
+
+.hero .sub {
+  font-size:var(--fs-body);
+  color:var(--text-muted);
+  max-width:70ch;
+  margin-bottom:var(--space-2xl);
+  line-height:1.7;
+  text-align:center;
+}
+
+.hero-actions {
+  display:flex;
+  align-items:center;
+  gap:var(--space-lg);
+  justify-content:center;
+}
+
 .btn {
   display:inline-flex;
   align-items:center;
@@ -151,13 +196,37 @@
 .btn svg { transition:transform var(--fast) var(--ease-out); }
 .btn:hover svg { transform:translateX(2px); }
 
+/* --- Nav: cockpit HUD slide-down --- */
+.top {
+  transform:translateY(-100%);
+  transition:transform 400ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.top--loaded {
+  transform:translateY(0);
+}
+
+/* Cockpit dashboard top bar */
+.top::after {
+  content:'';
+  position:absolute;
+  bottom:0;
+  left:4%;
+  right:4%;
+  height:1px;
+  background:linear-gradient(90deg, transparent, var(--border-light) 10%, var(--text-dim) 50%, var(--border-light) 90%, transparent);
+  opacity:0.35;
+  pointer-events:none;
+}
+
 @media (max-width:600px) {
   .hero { padding:5rem var(--space-md) 3rem; padding-top:calc(5rem + env(safe-area-inset-top, 0px)); min-height:92dvh; }
+  .hero::before { background: radial-gradient(ellipse 80% 70% at 50% 50%, transparent 25%, rgba(0,0,0,0.55) 100%); }
+  .hero::after { left:4%; right:4%; }
   .hero-content { max-width:100%; }
   .hero .sub { max-width:100%; font-size:0.8125rem; }
   .hero-actions { flex-direction:column; align-items:center; }
   .scroll-hint { bottom:1.5rem; }
-  .status { font-size:8px; margin-bottom:var(--space-lg); }
+  .status { font-size:8px; margin-bottom:var(--space-lg); padding:5px 12px; }
   @media (max-height:500px) {
     .hero { min-height:auto; padding:4rem var(--space-md) 2rem; }
     .scroll-hint { display:none; }
@@ -167,6 +236,7 @@
 @media (max-width:400px) {
   .hero { padding:4.5rem var(--space-sm) 2.5rem; min-height:90dvh; }
   .hero .sub { font-size:0.8125rem; }
+  .status { font-size:7px; padding:4px 10px; }
 }
 
 @media (max-width:360px) {
@@ -175,7 +245,8 @@
   .hero .sub { font-size:0.8125rem; }
   .hero-actions { gap:var(--space-sm); }
   .hero-actions .btn { padding:10px 20px; font-size:0.8125rem; min-height:40px; }
-  .status { font-size:8px; gap:5px; }
+  .status { font-size:8px; gap:5px; padding:3px 8px; }
+  .top { transition:transform 300ms cubic-bezier(0.16, 1, 0.3, 1); }
 }
 
 @media (min-width:601px) and (max-width:899px) {
@@ -184,4 +255,11 @@
 
 @media (min-width:900px) and (max-width:1199px) {
   .hero { padding:6rem var(--space-2xl) 5rem; }
+}
+
+/* Reduced motion override */
+@media (prefers-reduced-motion:reduce) {
+  .hero::before { opacity:1; transition:none; }
+  .stagger-reveal, .hero h1 .hl, .scroll-hint { opacity:1 !important; animation:none !important; }
+  .top { transform:translateY(0); transition:none; }
 }

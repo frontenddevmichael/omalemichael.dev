@@ -34,8 +34,6 @@ const TESTIMONIALS = [
   },
 ];
 
-const ITEMS = [...TESTIMONIALS, ...TESTIMONIALS];
-
 function Stars({ count }) {
   return (
     <span className="ts-stars" aria-label={`${count} out of 5 stars`}>
@@ -51,22 +49,20 @@ function Stars({ count }) {
 export default function Testimonials() {
   return (
     <SpecSection id="testimonials" num="06" title="Testimonials">
-        <div className="ts-outer" role="region" aria-label="Testimonials">
-        <div className="ts-track">
-          {ITEMS.map((t, i) => (
-            <div key={i} className="ts-card">
-              <svg className="ts-mark" viewBox="0 0 24 20" width="40" height="34" aria-hidden="true">
-                <path d="M0 20V8l4-8h6l-4 8h4v12H0zm14 0V8l4-8h6l-4 8h4v12H14z" fill="currentColor" />
-              </svg>
-              <Stars count={t.rating} />
-              <p className="ts-quote">{t.quote}</p>
-              <footer className="ts-footer">
-                <span className="ts-name">{t.name}</span>
-                <span className="ts-role">{t.role}</span>
-              </footer>
-            </div>
-          ))}
-        </div>
+      <div className="ts-grid">
+        {TESTIMONIALS.map((t, i) => (
+          <div key={i} className="ts-card">
+            <svg className="ts-mark" viewBox="0 0 24 20" width="40" height="34" aria-hidden="true">
+              <path d="M0 20V8l4-8h6l-4 8h4v12H0zm14 0V8l4-8h6l-4 8h4v12H14z" fill="currentColor" />
+            </svg>
+            <Stars count={t.rating} />
+            <p className="ts-quote">{t.quote}</p>
+            <footer className="ts-footer">
+              <span className="ts-name">{t.name}</span>
+              <span className="ts-role">{t.role}</span>
+            </footer>
+          </div>
+        ))}
       </div>
     </SpecSection>
   );

@@ -35,7 +35,7 @@ export default function LoadingScreen() {
         <FlickerSpinner
           grids={loaderGrids}
           onColor="#F5F5F5"
-          offColor="#404040"
+          offColor="#000000"
         />
       </div>
     </div>

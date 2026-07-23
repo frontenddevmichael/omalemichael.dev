@@ -40,7 +40,7 @@
 }
 
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
-html { scroll-behavior:smooth; -webkit-font-smoothing:antialiased; overflow-x:hidden; }
+html { scroll-behavior:smooth; -webkit-font-smoothing:antialiased; }
 html.no-scroll, html.no-scroll body { overflow:hidden; }
 body { background:var(--bg); color:var(--text); font-family:var(--font-sans); font-size:var(--fs-body); line-height:var(--lh-body); overflow-x:hidden; min-height:100vh; }
 
@@ -1141,37 +1141,23 @@ section[id] { scroll-margin-top:4rem; }
 .write .c h3 { font-size:var(--fs-h3); font-weight:520; color:var(--text-soft); letter-spacing:-.01em; margin-bottom:2px; }
 .write .c p { font-size:var(--fs-small); color:var(--text-muted); line-height:var(--lh-body); }
 
-/* --- contact sticky cards --- */
+/* --- contact overlap cards --- */
 .section-body.contact-section {
-  min-height: 150vh;
-  padding-bottom: 20vh;
-}
-
-@media (max-width: 900px) {
-  .section-body.contact-section {
-    min-height: 120vh;
-    padding-bottom: 15vh;
-  }
+  min-height: 130vh;
+  padding-bottom: 15vh;
 }
 
 @media (max-width: 600px) {
   .section-body.contact-section {
-    min-height: 110vh;
+    min-height: 120vh;
     padding-bottom: 10vh;
   }
 }
 
 @media (max-width: 400px) {
   .section-body.contact-section {
-    min-height: 105vh;
+    min-height: 110vh;
     padding-bottom: 8vh;
-  }
-}
-
-@media (max-width: 360px) {
-  .section-body.contact-section {
-    min-height: 100vh;
-    padding-bottom: 6vh;
   }
 }
 
@@ -1180,51 +1166,20 @@ section[id] { scroll-margin-top:4rem; }
 }
 
 .clink-card {
-  position: sticky;
+  position: relative;
   display: flex; align-items: center; gap: var(--space-lg);
   padding: var(--space-lg) var(--space-xl);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   background: var(--surface);
   color: var(--text-muted);
-  transition: background var(--fast), border-color var(--fast), color var(--fast), transform var(--fast);
-  z-index: 1;
+  will-change: transform;
+  -webkit-tap-highlight-color:transparent;
 }
-.clink-card:hover { background: var(--surface-2); border-color: var(--border-light); color: var(--text); transform: translateX(6px); }
-.clink-card:active { transform: translateX(6px) scale(0.98); }
-
-.clink-card[data-i="1"] { top: calc(4rem + 60px); z-index: 1; }
-.clink-card[data-i="2"] { top: calc(4rem + 100px); z-index: 2; }
-.clink-card[data-i="3"] { top: calc(4rem + 140px); z-index: 3; }
-.clink-card[data-i="4"] { top: calc(4rem + 180px); z-index: 4; }
-.clink-card { -webkit-tap-highlight-color:transparent; }
-
-@media (max-width: 900px) {
-  .clink-card[data-i="1"] { top: calc(3.5rem + 50px); }
-  .clink-card[data-i="2"] { top: calc(3.5rem + 90px); }
-  .clink-card[data-i="3"] { top: calc(3.5rem + 130px); }
-  .clink-card[data-i="4"] { top: calc(3.5rem + 170px); }
-}
-
-@media (max-width: 600px) {
-  .clink-card[data-i="1"] { top: calc(3rem + 40px); }
-  .clink-card[data-i="2"] { top: calc(3rem + 72px); }
-  .clink-card[data-i="3"] { top: calc(3rem + 104px); }
-  .clink-card[data-i="4"] { top: calc(3rem + 136px); }
-}
-
-@media (max-width: 400px) {
-  .clink-card[data-i="1"] { top: calc(2rem + 24px); }
-  .clink-card[data-i="2"] { top: calc(2rem + 46px); }
-  .clink-card[data-i="3"] { top: calc(2rem + 68px); }
-  .clink-card[data-i="4"] { top: calc(2rem + 90px); }
-}
-@media (max-width: 360px) {
-  .clink-card[data-i="1"] { top: calc(1.5rem + 20px); }
-  .clink-card[data-i="2"] { top: calc(1.5rem + 38px); }
-  .clink-card[data-i="3"] { top: calc(1.5rem + 56px); }
-  .clink-card[data-i="4"] { top: calc(1.5rem + 74px); }
-}
+.clink-card:hover { background: var(--surface-2); border-color: var(--border-light); color: var(--text); }
+.clink-card:active { transform: scale(0.98); }
+.clink-card .cc-arrow { color: var(--text-dim); transition: color var(--fast), transform var(--fast); }
+.clink-card:hover .cc-arrow { color: var(--text); transform: translateX(4px); }
 
 .clink-card .cc-icon svg { width: 24px; height: 24px; color: var(--text-dim); flex-shrink: 0; transition: color var(--fast), transform var(--fast); }
 .clink-card:hover .cc-icon svg { color: var(--text); transform: scale(1.06); }
@@ -1232,9 +1187,6 @@ section[id] { scroll-margin-top:4rem; }
 .clink-card .cc-body { flex: 1; display: flex; flex-direction: column; gap: 2px; }
 .clink-card .cc-body .cc-l { font-size: var(--fs-body); font-weight: 480; color: var(--text-soft); }
 .clink-card .cc-body .cc-h { font-family: var(--font-mono); font-size: var(--fs-small); color: var(--text-dim); }
-
-.clink-card .cc-arrow { color: var(--text-dim); transition: color var(--fast), transform var(--fast); }
-.clink-card:hover .cc-arrow { color: var(--text); transform: translateX(4px); }
 
 @keyframes blip {
   0%,100% { opacity:0.3; }
@@ -1244,7 +1196,7 @@ section[id] { scroll-margin-top:4rem; }
   display:flex; align-items:center; gap:8px;
   font-family:var(--font-mono); font-size:10px;
   color:var(--text-muted);
-  margin-bottom:var(--space-md);
+  margin-bottom:var(--space-lg);
   padding:8px 14px;
   border:1px solid var(--border);
   border-radius:var(--radius-sm);
@@ -1738,7 +1690,8 @@ section[id] { scroll-margin-top:4rem; }
   .now-c { padding:var(--space-sm); }
   .write { padding:var(--space-sm); }
   .clink-card { padding:var(--space-sm); gap:6px; }
-  .clink-card .cc-icon svg { width:16px; height:16px; }
+  .clink-card .cc-icon svg { width:14px; height:14px; }
+  .clink-card .cc-arrow { display:none; }
   .footer .big { font-size:1.25rem; }
   .footer-inner { max-width:100%; padding:var(--space-lg) 6px; }
   .footer .links { gap:var(--space-sm); }
@@ -1818,7 +1771,6 @@ section[id] { scroll-margin-top:4rem; }
   .write { padding:var(--space-xl); }
   .clink-card { padding:var(--space-xl) var(--space-2xl); gap:var(--space-lg); }
   .clink-card .cc-icon svg { width:26px; height:26px; }
-  .contact-status { margin-bottom:var(--space-lg); }
   .footer { padding:0; min-height:70vh; }
   .footer-inner { max-width:50%; padding:var(--space-2xl) var(--space-2xl); }
   .top { padding:14px var(--space-2xl); }
@@ -1853,7 +1805,6 @@ section[id] { scroll-margin-top:4rem; }
   .clink-card .cc-icon svg { width:30px; height:30px; }
   .clink-card .cc-body .cc-l { font-size:1.125rem; }
   .clink-card .cc-body .cc-h { font-size:var(--fs-small); }
-  .contact-status { margin-bottom:var(--space-lg); font-size:11px; }
   .footer { padding:0; min-height:60vh; }
   .footer .big { font-size:clamp(2rem, 5vw, 6rem); }
   .footer-inner { max-width:45%; padding:var(--space-3xl) var(--space-3xl); }
