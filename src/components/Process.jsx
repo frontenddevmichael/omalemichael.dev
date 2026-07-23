@@ -19,7 +19,7 @@ const STEPS = [
   {
     n: '03',
     t: 'Fine-tune with AI',
-    d: 'Use AI tooling (Lovable, Bolt, Claude) to iterate quickly on directions and prototype faster.',
+    d: 'Use AI tooling to ideate best practices and iterate quickly on directions and prototype faster.',
   },
   {
     n: '04',

@@ -1,15 +1,25 @@
 .sk-inf {
+  --sk-item-h: 84px;
   position: relative;
-  min-height: clamp(300px, 60vh, 420px);
-  cursor: grab;
+  height: clamp(300px, 60vh, 420px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scroll-snap-type: y mandatory;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  cursor: pointer;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
   mask-image: linear-gradient(to bottom, transparent 0%, #000 4%, #000 96%, transparent 100%);
   -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 4%, #000 96%, transparent 100%);
-  overscroll-behavior: contain;
-  touch-action: none;
 }
-.sk-inf:active { cursor: grabbing; }
+.sk-inf::-webkit-scrollbar { display: none; }
+
+.sk-inf:focus-visible {
+  outline: 2px solid var(--accent, currentColor);
+  outline-offset: 2px;
+}
+
 .sk-inf::after {
   content: '';
   position: absolute;
@@ -22,20 +32,22 @@
   pointer-events: none;
   z-index: 0;
 }
+
 .sk-inf-item {
-  position: absolute;
-  left: 0;
-  width: 100%;
+  height: var(--sk-item-h);
+  box-sizing: border-box;
+  scroll-snap-align: center;
   display: flex;
   align-items: center;
   gap: 14px;
   padding: 14px 24px;
   border-radius: var(--radius-md);
-  will-change: transform, opacity;
+  transition: background 0.15s ease;
   -webkit-tap-highlight-color: transparent;
-  cursor: pointer;
 }
+.sk-inf-item:hover { background: var(--surface-2); }
 .sk-inf-item:active { background: var(--surface-3); }
+
 .sk-inf-index {
   font-family: var(--font-mono);
   font-size: 14px;
@@ -46,10 +58,14 @@
 }
 .sk-inf-name {
   font-size: clamp(1.4rem, 3vw, 2.2rem);
-  font-weight: 520;
+  font-weight: 600;
   letter-spacing: -0.02em;
   color: var(--text-muted);
   white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sk-inf-item { transition: none; }
 }
 
 @media (max-width: 400px) {

@@ -1,11 +1,9 @@
 import SpecSection from './SpecSection';
 import { LINKS } from '../data/links';
 
-// Drop your resume PDF in /public/resume.pdf and this button will serve it
-// directly. Until that file exists, it falls back to a prefilled email
-// request instead of a dead link/fake alert.
-const RESUME_PATH = '/resume.pdf';
 
+const RESUME_PATH = '/resume.pdf';
+// resume goes here
 export default function Resume() {
   return (
     <SpecSection id="resume" num="07" title="Resume">
