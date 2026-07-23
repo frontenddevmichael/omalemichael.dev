@@ -14,6 +14,7 @@ const ITEMS = Array.from({ length: CP }, () => SKILLS).flat();
 const TH = ITEMS.length * IH;
 
 export default function Skills() {
+  const sectionRef = useRef(null);
   const ref = useRef(null);
   const rf = useRef(null);
   const sy = useRef(0);
@@ -23,17 +24,17 @@ export default function Skills() {
   const lt = useRef(0);
 
   useEffect(() => {
+    const section = sectionRef.current;
     const el = ref.current;
-    if (!el) return;
+    if (!section || !el) return;
     let isVisible = true;
     const visObs = new IntersectionObserver(([entry]) => { isVisible = entry.isIntersecting; }, { threshold: 0 });
     visObs.observe(el);
 
-    const onWheel = e => { e.preventDefault(); };
-    el.addEventListener('wheel', onWheel, { passive: false });
-    const noop = e => e.preventDefault();
-    el.addEventListener('touchstart', noop, { passive: false });
-    el.addEventListener('touchmove', noop, { passive: false });
+    const prevent = e => e.preventDefault();
+    section.addEventListener('wheel', prevent, { passive: false });
+    section.addEventListener('touchstart', prevent, { passive: false });
+    section.addEventListener('touchmove', prevent, { passive: false });
 
     lt.current = performance.now();
     const loop = now => {
@@ -78,9 +79,9 @@ export default function Skills() {
     rf.current = requestAnimationFrame(loop);
     return () => {
       visObs.disconnect();
-      el.removeEventListener('wheel', onWheel);
-      el.removeEventListener('touchstart', noop);
-      el.removeEventListener('touchmove', noop);
+      section.removeEventListener('wheel', prevent);
+      section.removeEventListener('touchstart', prevent);
+      section.removeEventListener('touchmove', prevent);
       if (rf.current) cancelAnimationFrame(rf.current);
     };
   }, []);
@@ -120,7 +121,7 @@ export default function Skills() {
   }, []);
 
   return (
-    <SpecSection id="skills" num="03" title="Skills &amp; Tools">
+    <SpecSection id="skills" num="03" title="Skills &amp; Tools" sectionRef={sectionRef}>
       <div
         ref={ref}
         className="sk-inf stagger-up"
