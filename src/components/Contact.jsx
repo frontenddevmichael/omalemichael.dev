@@ -43,8 +43,9 @@ export default function Contact() {
       const progress = Math.max(0, Math.min(1, scrollPast / travel));
       const offsets = offsetsRef.current || getOffsets();
 
+      const m = window.innerWidth < 768 ? 1.0 : 2.0;
       for (let i = 0; i < cards.length; i++) {
-        cards[i].style.transform = `translateY(${-progress * offsets[i] * 2.0}px)`;
+        cards[i].style.transform = `translateY(${-progress * offsets[i] * m}px)`;
         cards[i].style.zIndex = i + 1;
       }
     };

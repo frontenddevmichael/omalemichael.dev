@@ -29,6 +29,9 @@ export default function Skills() {
     const visObs = new IntersectionObserver(([entry]) => { isVisible = entry.isIntersecting; }, { threshold: 0 });
     visObs.observe(el);
 
+    const onWheel = e => { e.preventDefault(); };
+    el.addEventListener('wheel', onWheel, { passive: false });
+
     lt.current = performance.now();
     const loop = now => {
       if (!isVisible) { rf.current = requestAnimationFrame(loop); return; }
@@ -72,6 +75,7 @@ export default function Skills() {
     rf.current = requestAnimationFrame(loop);
     return () => {
       visObs.disconnect();
+      el.removeEventListener('wheel', onWheel);
       if (rf.current) cancelAnimationFrame(rf.current);
     };
   }, []);
