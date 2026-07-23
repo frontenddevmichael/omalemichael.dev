@@ -35,6 +35,7 @@ export default function Contact() {
 
     const update = () => {
       raf = null;
+      if (window.innerWidth < 768) return;
       const sectionH = section.offsetHeight;
       const viewH = window.innerHeight;
       const sectionTop = section.offsetTop;
@@ -56,7 +57,15 @@ export default function Contact() {
       if (!raf) raf = requestAnimationFrame(update);
     };
 
-    const calc = () => { offsetsRef.current = getOffsets(); };
+    const calc = () => {
+      offsetsRef.current = getOffsets();
+      if (window.innerWidth < 768) {
+        for (let i = 0; i < cards.length; i++) {
+          cards[i].style.transform = '';
+          cards[i].style.zIndex = '';
+        }
+      }
+    };
     calc();
 
     const obs = new IntersectionObserver(([entry]) => {

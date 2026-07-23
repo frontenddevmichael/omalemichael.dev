@@ -1,3 +1,5 @@
+import { useRef, useEffect, useState } from 'react';
+import { usePrefersReducedMotion } from '../utils/useReducedMotion';
 import SpecSection from './SpecSection';
 import './Testimonials.css';
 
@@ -34,6 +36,8 @@ const TESTIMONIALS = [
   },
 ];
 
+const DUP = 3;
+
 function Stars({ count }) {
   return (
     <span className="ts-stars" aria-label={`${count} out of 5 stars`}>
@@ -46,23 +50,63 @@ function Stars({ count }) {
   );
 }
 
+function Card({ t, i }) {
+  return (
+    <div className="ts-card" key={i}>
+      <svg className="ts-mark" viewBox="0 0 24 20" width="40" height="34" aria-hidden="true">
+        <path d="M0 20V8l4-8h6l-4 8h4v12H0zm14 0V8l4-8h6l-4 8h4v12H14z" fill="currentColor" />
+      </svg>
+      <Stars count={t.rating} />
+      <p className="ts-quote">{t.quote}</p>
+      <footer className="ts-footer">
+        <span className="ts-name">{t.name}</span>
+        <span className="ts-role">{t.role}</span>
+      </footer>
+    </div>
+  );
+}
+
 export default function Testimonials() {
+  const trackRef = useRef(null);
+  const reducedMotion = usePrefersReducedMotion();
+  const [paused, setPaused] = useState(false);
+
+  useEffect(() => {
+    if (reducedMotion) return;
+    const track = trackRef.current;
+    if (!track) return;
+    let raf = null;
+    let x = 0;
+    const speed = 0.6;
+
+    const loop = () => {
+      x -= speed;
+      const w = track.scrollWidth / DUP;
+      if (Math.abs(x) >= w) x += w;
+      track.style.transform = `translateX(${x}px)`;
+      raf = requestAnimationFrame(loop);
+    };
+    raf = requestAnimationFrame(loop);
+    return () => { if (raf) cancelAnimationFrame(raf); };
+  }, [reducedMotion]);
+
+  const items = [];
+  for (let d = 0; d < DUP; d++) {
+    for (let i = 0; i < TESTIMONIALS.length; i++) {
+      items.push(<Card key={`${d}-${i}`} t={TESTIMONIALS[i]} i={`${d}-${i}`} />);
+    }
+  }
+
   return (
     <SpecSection id="testimonials" num="06" title="Testimonials">
-      <div className="ts-grid">
-        {TESTIMONIALS.map((t, i) => (
-          <div key={i} className="ts-card">
-            <svg className="ts-mark" viewBox="0 0 24 20" width="40" height="34" aria-hidden="true">
-              <path d="M0 20V8l4-8h6l-4 8h4v12H0zm14 0V8l4-8h6l-4 8h4v12H14z" fill="currentColor" />
-            </svg>
-            <Stars count={t.rating} />
-            <p className="ts-quote">{t.quote}</p>
-            <footer className="ts-footer">
-              <span className="ts-name">{t.name}</span>
-              <span className="ts-role">{t.role}</span>
-            </footer>
-          </div>
-        ))}
+      <div className="ts-marquee"
+        onMouseEnter={() => setPaused(true)}
+        onMouseLeave={() => setPaused(false)}
+        onTouchStart={() => setPaused(true)}
+        onTouchEnd={() => setPaused(false)}>
+        <div className={`ts-track${paused ? ' ts-track--paused' : ''}`} ref={trackRef}>
+          {items}
+        </div>
       </div>
     </SpecSection>
   );

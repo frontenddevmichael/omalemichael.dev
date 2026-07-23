@@ -1,7 +1,16 @@
-.ts-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+.ts-marquee {
+  overflow: hidden;
+  mask-image: linear-gradient(to right, transparent 0, #000 24px, #000 calc(100% - 24px), transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 24px, #000 calc(100% - 24px), transparent 100%);
+}
+.ts-track {
+  display: flex;
   gap: var(--space-md);
+  width: max-content;
+  will-change: transform;
+}
+.ts-track--paused {
+  animation-play-state: paused;
 }
 .ts-card {
   position: relative;
@@ -11,12 +20,13 @@
   background: var(--surface);
   display: flex;
   flex-direction: column;
-  transition: border-color 300ms var(--ease-out), box-shadow 300ms var(--ease-out), transform 300ms var(--ease-out);
+  width: 320px;
+  flex-shrink: 0;
+  transition: border-color 300ms var(--ease-out), box-shadow 300ms var(--ease-out);
 }
 .ts-card:hover {
   border-color: var(--border-light);
   box-shadow: 0 8px 28px rgba(0,0,0,0.08);
-  transform: scale(1.01);
 }
 .ts-mark {
   position: absolute;
@@ -53,9 +63,12 @@
 .ts-role { color: var(--text-dim); font-size: 11px; font-family: var(--font-mono); }
 
 @media (max-width: 600px) {
-  .ts-grid { grid-template-columns: 1fr; }
-  .ts-card { padding: var(--space-md); }
+  .ts-card { width: 280px; padding: var(--space-md); }
   .ts-quote { font-size: 13px; }
   .ts-name { font-size: 11px; }
   .ts-role { font-size: 10px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ts-track { transform: none !important; }
 }
