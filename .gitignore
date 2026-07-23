@@ -29,3 +29,8 @@ dist-ssr
 
 .freebuff/
 nul
+
+# accidental
+HeroScene.jsx
+lighthouse-mobile-report.html
+src.zip
